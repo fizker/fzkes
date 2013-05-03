@@ -13,5 +13,8 @@ function createFake() {
 	fake.returns = function(val) {
 		this.calls(function() { return val })
 	}
+	fake.throws = function(val) {
+		this.calls(function() { throw val || new Error })
+	}
 	return fake
 }

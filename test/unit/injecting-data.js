@@ -1,19 +1,17 @@
 describe('unit/injecting-data.js', function() {
-	describe('When calling `fzkes.fake()`', function() {
-		it('should return a function', function() {
-			expect(fzkes.fake()).to.be.a('function')
-		})
-		it('should do nothing when called', function() {
-			var fake = fzkes.fake()
+	var fake
+	beforeEach(function() {
+		fake = fzkes.fake()
+	})
+	describe('When calling a clean `fake`', function() {
+		it('should do nothing', function() {
 			expect(fake()).to.equal(undefined)
 		})
 	})
 	describe('When asking a fake to call a specific function', function() {
-		var fake
 		var wasCalled
 		var params
 		beforeEach(function() {
-			fake = fzkes.fake()
 			wasCalled = false
 			params = null
 			fake.calls(function() {
@@ -35,16 +33,29 @@ describe('unit/injecting-data.js', function() {
 		})
 	})
 	describe('When asking a fake to return values', function() {
-		var fake
-		beforeEach(function() {
-			fake = fzkes.fake()
-		})
 		it('should have a function called `returns`', function() {
 			expect(fake.returns).to.be.a('function')
 		})
 		it('should then return the requested value', function() {
 			fake.returns('abc')
 			expect(fake()).to.equal('abc')
+		})
+	})
+	describe('When asking a fake to throw', function() {
+		it('should do that', function() {
+			fake.throws()
+			expect(function() { fake() }).to.throw()
+		})
+		describe('with a parameter', function() {
+			it('should throw that object', function() {
+				var o = { }
+				fake.throws(o)
+				try {
+					fake()
+				} catch(e) {
+					expect(e).to.equal(o)
+				}
+			})
 		})
 	})
 })
