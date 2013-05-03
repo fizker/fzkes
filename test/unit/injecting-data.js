@@ -33,9 +33,6 @@ describe('unit/injecting-data.js', function() {
 		})
 	})
 	describe('When asking a fake to return values', function() {
-		it('should have a function called `returns`', function() {
-			expect(fake.returns).to.be.a('function')
-		})
 		it('should then return the requested value', function() {
 			fake.returns('abc')
 			expect(fake()).to.equal('abc')
