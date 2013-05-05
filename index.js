@@ -6,9 +6,19 @@ function createFake() {
 	var __slice = Array.prototype.slice
 	var action = function() {}
 	var calls = []
+	var constrainedFakes = []
+	constrainedFakes.find = function(args) {
+		var fake
+		if(!constrainedFakes.some(function(f) {
+			fake = f.fake
+			return compareArrays(args, f.args)
+		})) { fake = null }
+		return fake
+	}
 	var fake = function() {
-		calls.push(__slice.call(arguments))
-		return action.apply(this, arguments)
+		var args = __slice.call(arguments)
+		calls.push(args)
+		return (constrainedFakes.find(args) || action).apply(this, args)
 	}
 	fake.__defineGetter__('callCount', function() {
 		return calls.length
@@ -28,10 +38,23 @@ function createFake() {
 	fake.wasCalledWith = function() {
 		var args = __slice.call(arguments)
 		return calls.some(function(call) {
-			return args.every(function(arg, idx) {
-				return arg == call[idx]
-			})
+			return compareArrays(args, call)
 		})
 	}
+	fake.withArgs = function() {
+		var args = __slice.call(arguments)
+		var newFake = createFake()
+		constrainedFakes.push(
+		{ args: args
+		, fake: newFake
+		})
+		return newFake
+	}
 	return fake
+}
+
+function compareArrays(a, b) {
+	return a.every(function(itm, idx) {
+		return itm == b[idx]
+	})
 }

@@ -8,6 +8,24 @@ describe('unit/injecting-data.js', function() {
 			expect(fake()).to.equal(undefined)
 		})
 	})
+	describe('When calling `withArgs()`', function() {
+		var constrained
+		beforeEach(function() {
+			constrained = fake.withArgs(1, 2)
+		})
+		describe('and calling `returns()`', function() {
+			beforeEach(function() {
+				fake.returns(123)
+				constrained.returns('abc')
+			})
+			it('should return the general if the parameters does not match', function() {
+				expect(fake('a', 'b')).to.equal(123)
+			})
+			it('should return the specific if the arguments match', function() {
+				expect(fake(1, 2)).to.equal('abc')
+			})
+		})
+	})
 	describe('When asking a fake to call a specific function', function() {
 		var wasCalled
 		var params

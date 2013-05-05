@@ -1,5 +1,5 @@
 { "name": "fzkes"
-, "version": "0.2.0"
+, "version": "0.3.0"
 , "description": "A faking library"
 , "main": "index.js"
 , "scripts":
