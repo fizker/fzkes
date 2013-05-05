@@ -43,7 +43,7 @@ function createFake() {
 		var fake
 		if(!constrainedFakes.some(function(f) {
 			fake = f.fake
-			return compareArrays(args, f.args)
+			return compareArrays(f.args, args)
 		})) { fake = null }
 		return fake
 	}

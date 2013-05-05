@@ -24,6 +24,9 @@ describe('unit/injecting-data.js', function() {
 			it('should return the specific if the arguments match', function() {
 				expect(fake(1, 2)).to.equal('abc')
 			})
+			it('should return the specific even if more argments are passed than required', function() {
+				expect(fake(1,2,3)).to.equal('abc')
+			})
 		})
 	})
 	describe('When asking a fake to call a specific function', function() {
