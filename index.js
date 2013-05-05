@@ -1,6 +1,7 @@
 module.exports =
 { fake: createFake
 , chai: attachToChai
+, version: require('./package.json').version
 }
 
 var __slice = Array.prototype.slice

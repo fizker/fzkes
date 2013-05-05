@@ -8,6 +8,55 @@ I must immediately apologize for the name; it is a horrible pun combining `fzk`
 and I want it to be short and unique. So there it is.
 
 
+How to use
+----------
+
+### Creating fakes
+
+	var fzkes = require('fzkes')
+	var fake = fzkes.fake()
+	var fs = require('fs')
+	fzkes.fake(fs, 'readFile')
+
+
+### Restoring original functions
+
+	fake.restore()
+
+
+### Injecting data
+
+	fake.returns('abc')
+	fake.throws(new Error('some error'))
+	fake.calls(function() { console.log('was called') })
+	fake.withArgs(1,2).returns(3)
+	fake.withArgs(1,2).callsOriginal()
+
+	// If it replaced a function on an object:
+	fake.callsOriginal()
+
+
+### Asserting
+
+	fake.wasCalled()
+	fake.wasCalledWith(1, 2, 3)
+	fake.callCount == 2
+
+
+### Using with `chai`
+
+	chai.use(fzkes.chai)
+	fake.should.have.been.called // at least once
+	fake.should.have.been.called(2) // precisely 2 times
+	fake.should.have.been.calledWith(1,2,3)
+
+
+--------
+
+The text below here are from the original mission statement, and will be
+replaced with proper documentation as some point.
+
+
 Supported environments
 ----------------------
 
@@ -31,23 +80,23 @@ The features rotate around two simple concepts:
 
 This is a simple list of the features I want this to have:
 
-- Replace a function
-- A way to verify that the fake was called, and with the expected parameters
-- A way to have it execute a specific function
-- A way to have it execute the original function
-- A way to return a specific value
-- A way to throw a specific error
+- <s>Replace a function</s>
+- <s>A way to verify that the fake was called, and with the expected parameters</s>
+- <s>A way to have it execute a specific function</s>
+- <s>A way to have it execute the original function</s>
+- <s>A way to return a specific value</s>
+- <s>A way to throw a specific error</s>
 - A way to call the last function passed as a parameter (node callback style)
 - A way to call the first function passed as a parameter
 - A way to call a specific parameter as if it was a function
 - A way to call a function (any of the above) on the next tick instead of
   immediately
-- A way to restore the system after a fake
+- <s>A way to restore the system after a fake</s>
 - A way to easily set up and restore multiple fakes
 
 All the ways to inject data into the system should allow setting both future
 calls and to the last call received. The only exceptions are the throw and
 return parts, which only makes sense for future calls.
 
-All ways (really all this time around) should allow for specific parameters to be
-required before taking effect, allowing for handling more complex interactions.
+<s>All ways (really all this time around) should allow for specific parameters to be
+required before taking effect, allowing for handling more complex interactions.</s>
