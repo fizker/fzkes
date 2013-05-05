@@ -35,7 +35,7 @@ function attachToChai(chai, utils) {
 	})
 }
 
-function createFake() {
+function createFake(target, property) {
 	var action = function() {}
 	var calls = []
 	var constrainedFakes = []
@@ -86,8 +86,22 @@ function createFake() {
 		})
 		return newFake
 	}
+	fake.restore = function() {
+		if(target && property) {
+			target[property] = original
+		}
+	}
+	fake.callsOriginal = function() {
+		this.calls(original)
+	}
 
+	var original
 	fake.name = 'fake'
+	if(target && property) {
+		fake.name = property
+		original = target[property]
+		target[property] = fake
+	}
 
 	return fake
 }
