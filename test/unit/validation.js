@@ -30,5 +30,13 @@ describe('unit/validation.js', function() {
 		it('should return true for `wasCalledWith(123)`', function() {
 			expect(fake.wasCalledWith(123)).to.equal(true)
 		})
+		describe('with an object', function() {
+			beforeEach(function() {
+				fake({ a: 1, b: [ 2, { c: 3 } ] })
+			})
+			it('should match `wasCalledWith` deeply', function() {
+				expect(fake.wasCalledWith({ a: 1, b: [ 2, { c: 3 } ] })).to.be.true
+			})
+		})
 	})
 })

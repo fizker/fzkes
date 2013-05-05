@@ -16,6 +16,19 @@ describe('integration/chai.js', function() {
 				expect(fake).to.have.been.called
 			}).to.throw()
 		})
+		describe('and using `not`', function() {
+			it('should not pass if the fake have been called', function() {
+				fake()
+				expect(function() {
+					expect(fake).not.to.have.been.called
+				}).to.throw()
+			})
+			it('should not fail if the fake have not been called', function() {
+				expect(function() {
+					expect(fake).not.to.have.been.called
+				}).not.to.throw()
+			})
+		})
 	})
 	describe('When asserting for `calledWith`', function() {
 		it('should pass if the parameters match', function() {
@@ -29,6 +42,20 @@ describe('integration/chai.js', function() {
 			expect(function() {
 				expect(fake).to.have.been.calledWith('a', 'b')
 			}).to.throw()
+		})
+		describe('and using `not`', function() {
+			it('should not pass if the parameters match', function() {
+				fake(1, 2)
+				expect(function() {
+					expect(fake).not.to.have.been.calledWith(1, 2)
+				}).to.throw()
+			})
+			it('should not fail if the parameters does not match', function() {
+				fake(1, 2)
+				expect(function() {
+					expect(fake).not.to.have.been.calledWith('a', 'b')
+				}).not.to.throw()
+			})
 		})
 	})
 	describe('When asserting the call count', function() {

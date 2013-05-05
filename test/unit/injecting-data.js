@@ -4,7 +4,7 @@ describe('unit/injecting-data.js', function() {
 		fake = fzkes.fake()
 	})
 	describe('When calling a clean `fake`', function() {
-		it('should do nothing', function() {
+		it('should return nothing', function() {
 			expect(fake()).to.equal(undefined)
 		})
 	})

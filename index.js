@@ -11,23 +11,23 @@ function attachToChai(chai, utils) {
 		var actualCallCount = fake.callCount
 		var expected = expectedCallCount + (expectedCallCount == 1 ? ' time' : ' times' )
 		var actual = actualCallCount + (actualCallCount == 1 ? ' time' : ' times' )
-		new chai.Assertion(actualCallCount).assert(
+		this.assert(
 		  actualCallCount == expectedCallCount
 		, 'expected fake to have been called ' + expected + ', but it was called ' + actual
 		, 'expected fake to not have been called ' + expected + ', but it was'
 		)
 	}, function() {
 		var fake = utils.flag(this, 'object')
-		new chai.Assertion(fake).assert(
+		this.assert(
 		  fake.wasCalled()
-		, 'expected fake to have been called'
-		, 'expected fake to not have been called'
+		, 'expected ' + fake.name + ' to have been called'
+		, 'expected ' + fake.name + ' to not have been called'
 		)
 	})
 	chai.Assertion.addMethod('calledWith', function() {
 		var params = __slice.call(arguments)
 		var fake = utils.flag(this, 'object')
-		new chai.Assertion(params).assert(
+		this.assert(
 		  fake.wasCalledWith.apply(fake, params)
 		, 'expected fake to have been called with #{this}'
 		, 'expected fake to not have been called with #{this}'
@@ -47,6 +47,7 @@ function createFake() {
 		})) { fake = null }
 		return fake
 	}
+
 	var fake = function() {
 		var args = __slice.call(arguments)
 		calls.push(args)
@@ -54,6 +55,9 @@ function createFake() {
 	}
 	fake.__defineGetter__('callCount', function() {
 		return calls.length
+	})
+	fake.__defineGetter__('_calls', function() {
+		return calls
 	})
 	fake.calls = function(fn) {
 		action = fn
@@ -82,11 +86,26 @@ function createFake() {
 		})
 		return newFake
 	}
+
+	fake.name = 'fake'
+
 	return fake
 }
 
+function compareObjects(a, b) {
+	switch(typeof(a)) {
+		case 'object':
+			if(a == null) {
+				return a === b
+			}
+			return Object.keys(a).every(function(prop) {
+				return compareObjects(a[prop], b[prop])
+			})
+		default:
+			return a === b
+	}
+}
+
 function compareArrays(a, b) {
-	return a.every(function(itm, idx) {
-		return itm == b[idx]
-	})
+	return compareObjects(a, b)
 }
