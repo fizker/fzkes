@@ -1,9 +1,41 @@
 module.exports =
 { fake: createFake
+, chai: attachToChai
+}
+
+var __slice = Array.prototype.slice
+
+function attachToChai(chai, utils) {
+	chai.Assertion.addChainableMethod('called', function(expectedCallCount) {
+		var fake = utils.flag(this, 'object')
+		var actualCallCount = fake.callCount
+		var expected = expectedCallCount + (expectedCallCount == 1 ? ' time' : ' times' )
+		var actual = actualCallCount + (actualCallCount == 1 ? ' time' : ' times' )
+		new chai.Assertion(actualCallCount).assert(
+		  actualCallCount == expectedCallCount
+		, 'expected fake to have been called ' + expected + ', but it was called ' + actual
+		, 'expected fake to not have been called ' + expected + ', but it was'
+		)
+	}, function() {
+		var fake = utils.flag(this, 'object')
+		new chai.Assertion(fake).assert(
+		  fake.wasCalled()
+		, 'expected fake to have been called'
+		, 'expected fake to not have been called'
+		)
+	})
+	chai.Assertion.addMethod('calledWith', function() {
+		var params = __slice.call(arguments)
+		var fake = utils.flag(this, 'object')
+		new chai.Assertion(params).assert(
+		  fake.wasCalledWith.apply(fake, params)
+		, 'expected fake to have been called with #{this}'
+		, 'expected fake to not have been called with #{this}'
+		)
+	})
 }
 
 function createFake() {
-	var __slice = Array.prototype.slice
 	var action = function() {}
 	var calls = []
 	var constrainedFakes = []
