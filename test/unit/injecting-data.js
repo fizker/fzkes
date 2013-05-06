@@ -28,6 +28,39 @@ describe('unit/injecting-data.js', function() {
 				expect(fake(1,2,3)).to.equal('abc')
 			})
 		})
+		describe('with the same args', function() {
+			it('should reuse the same fake', function() {
+				var _1 = fake.withArgs(1)
+				var _2 = fake.withArgs(1)
+				expect(_1).to.equal(_2)
+			})
+		})
+		describe('with increasing restriction of args', function() {
+			var _1, _2
+			beforeEach(function() {
+				fake = fzkes.fake()
+				_1 = fake.withArgs(1)
+				_2 = fake.withArgs(1, 2)
+				_3 = fake.withArgs(3, 4)
+				_4 = fake.withArgs(3)
+			})
+			it('should use two different fakes (least no of args first)', function() {
+				expect(_1).to.not.equal(_2)
+			})
+			it('should use two different fakes (least no of args last)', function() {
+				expect(_3).to.not.equal(_4)
+			})
+			it('should call the most closely matched fake only (least no of args first)', function() {
+				fake(1, 2)
+				_1.should.not.have.been.called
+				_2.should.have.been.called
+			})
+			it('should call the most closely matched fake only (least no of args last)', function() {
+				fake(3, 4)
+				_3.should.have.been.called
+				_4.should.not.have.been.called
+			})
+		})
 	})
 	describe('When asking a fake to call a specific function', function() {
 		var wasCalled

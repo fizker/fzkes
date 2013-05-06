@@ -40,10 +40,14 @@ function createFake(target, property) {
 	var action = function() {}
 	var calls = []
 	var constrainedFakes = []
-	constrainedFakes.find = function(args) {
+	constrainedFakes.find = function(args, options) {
+		options = options || {}
 		var fake
 		if(!constrainedFakes.some(function(f) {
 			fake = f.fake
+			if(options.exactMatch && f.args.length != args.length) {
+				return false
+			}
 			return compareArrays(f.args, args)
 		})) { fake = null }
 		return fake
@@ -80,11 +84,16 @@ function createFake(target, property) {
 	}
 	fake.withArgs = function() {
 		var args = __slice.call(arguments)
-		var newFake = createFake()
+		var newFake = constrainedFakes.find(args, { exactMatch: true })
+		if(newFake) {
+			return newFake
+		}
+		newFake = createFake()
 		constrainedFakes.push(
 		{ args: args
 		, fake: newFake
 		})
+		constrainedFakes.sort(constrainedFakesSorter)
 		return newFake
 	}
 	fake.restore = function() {
@@ -123,4 +132,8 @@ function compareObjects(a, b) {
 
 function compareArrays(a, b) {
 	return compareObjects(a, b)
+}
+
+function constrainedFakesSorter(a, b) {
+	return b.args.length - a.args.length
 }
