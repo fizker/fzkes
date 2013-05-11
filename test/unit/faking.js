@@ -34,5 +34,14 @@ describe('unit/faking.js', function() {
 				expect(obj.a).not.to.equal(fake)
 			})
 		})
+		describe('and `restore()` is called on `fzkes`', function() {
+			beforeEach(function() {
+				fzkes.restore()
+			})
+			it('should restore all fakes', function() {
+				expect(obj.a).to.equal(fn)
+				expect(obj.a).not.to.equal(fake)
+			})
+		})
 	})
 })

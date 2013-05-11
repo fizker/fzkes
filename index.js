@@ -1,5 +1,7 @@
 module.exports =
 { fake: createFake
+, scope: createScope
+, restore: restoreAll
 , chai: attachToChai
 , version: require('./package.json').version
 }
@@ -34,6 +36,37 @@ function attachToChai(chai, utils) {
 		, 'expected fake to not have been called with #{this}'
 		)
 	})
+}
+
+var fakes = []
+function restoreAll() {
+	fakes.forEach(function(fake) {
+		fake.restore()
+	})
+	fakes = []
+}
+
+function createScope() {
+	var subs = []
+
+	return { fake: sub(createFake)
+	       , scope: sub(createScope)
+	       , restore: restoreSub
+	       }
+
+	function restoreSub() {
+		subs.forEach(function(sub) {
+			sub.restore()
+		})
+	}
+
+	function sub(fn) {
+		return function() {
+			var sub = fn.apply(null, arguments)
+			subs.push(sub)
+			return sub
+		}
+	}
 }
 
 function createFake(target, property) {
@@ -113,6 +146,7 @@ function createFake(target, property) {
 		target[property] = fake
 	}
 
+	fakes.push(fake)
 	return fake
 }
 

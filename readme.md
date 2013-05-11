@@ -21,7 +21,15 @@ How to use
 
 ### Restoring original functions
 
-	fake.restore()
+There are three ways to easily doing this, depending on the scope:
+
+Restoring a single fake: `fake.restore()`
+Restoring all fakes across the board: `fzkes.restore()`
+
+The last is a bit more tricky; A sub-scope can be creating by calling `fzkes.scope()`.
+The scope have all methods (except `chai`) that the original `fzkes` object have,
+except the `restore()` function on a scope only affects fakes created within
+that scope.
 
 
 ### Injecting data
