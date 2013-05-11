@@ -30,6 +30,34 @@ describe('integration/chai.js', function() {
 			})
 		})
 	})
+	describe('When asserting for `calledWithExactly`', function() {
+		it('should pass if the parameters match', function() {
+			fake(1, 2)
+			expect(function() {
+				expect(fake).to.have.been.calledWithExactly(1, 2)
+			}).not.to.throw()
+		})
+		it('should fail if the parameters does not match', function() {
+			fake(1, 2)
+			expect(function() {
+				expect(fake).to.have.been.calledWithExactly(1)
+			}).to.throw()
+		})
+		describe('and using `not`', function() {
+			it('should not pass if the parameters match', function() {
+				fake(1, 2)
+				expect(function() {
+					expect(fake).not.to.have.been.calledWithExactly(1, 2)
+				}).to.throw()
+			})
+			it('should not fail if the parameters does not match', function() {
+				fake(1, 2)
+				expect(function() {
+					expect(fake).not.to.have.been.calledWithExactly('a', 'b')
+				}).not.to.throw()
+			})
+		})
+	})
 	describe('When asserting for `calledWith`', function() {
 		it('should pass if the parameters match', function() {
 			fake(1, 2)

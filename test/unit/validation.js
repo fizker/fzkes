@@ -30,6 +30,12 @@ describe('unit/validation.js', function() {
 		it('should return true for `wasCalledWith(123)`', function() {
 			expect(fake.wasCalledWith(123)).to.equal(true)
 		})
+		it('should return false for `wasCalledWithExactly(123)`', function() {
+			expect(fake.wasCalledWithExactly(123)).to.be.false
+		})
+		it('should return true for `wasCalledWithExactly(123, "abc")`', function() {
+			expect(fake.wasCalledWithExactly(123, 'abc')).to.be.true
+		})
 		describe('with an object', function() {
 			beforeEach(function() {
 				fake({ a: 1, b: [ 2, { c: 3 } ] })

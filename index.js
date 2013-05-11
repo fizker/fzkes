@@ -36,6 +36,15 @@ function attachToChai(chai, utils) {
 		, 'expected ' + fake._name + ' to not have been called with #{this}'
 		)
 	})
+	chai.Assertion.addMethod('calledWithExactly', function() {
+		var params = __slice.call(arguments)
+		var fake = utils.flag(this, 'object')
+		this.assert(
+		  fake.wasCalledWithExactly.apply(fake, params)
+		, 'expected ' + fake._name + ' to have been called with exactly #{this}'
+		, 'expected ' + fake._name + ' to not have been called with exactly #{this}'
+		)
+	})
 }
 
 var fakes = []
@@ -113,6 +122,12 @@ function createFake(target, property) {
 		var args = __slice.call(arguments)
 		return calls.some(function(call) {
 			return compareArrays(args, call)
+		})
+	}
+	fake.wasCalledWithExactly = function() {
+		var args = __slice.call(arguments)
+		return calls.some(function(call) {
+			return call.length == args.length && compareArrays(args, call)
 		})
 	}
 	fake.withArgs = function() {
