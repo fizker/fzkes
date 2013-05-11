@@ -16,15 +16,15 @@ function attachToChai(chai, utils) {
 		var actual = actualCallCount + (actualCallCount == 1 ? ' time' : ' times' )
 		this.assert(
 		  actualCallCount == expectedCallCount
-		, 'expected fake to have been called ' + expected + ', but it was called ' + actual
-		, 'expected fake to not have been called ' + expected + ', but it was'
+		, 'expected ' + fake._name + ' to have been called ' + expected + ', but it was called ' + actual
+		, 'expected ' + fake._name + ' to not have been called ' + expected + ', but it was'
 		)
 	}, function() {
 		var fake = utils.flag(this, 'object')
 		this.assert(
 		  fake.wasCalled()
-		, 'expected ' + fake.name + ' to have been called'
-		, 'expected ' + fake.name + ' to not have been called'
+		, 'expected ' + fake._name + ' to have been called'
+		, 'expected ' + fake._name + ' to not have been called'
 		)
 	})
 	chai.Assertion.addMethod('calledWith', function() {
@@ -32,8 +32,8 @@ function attachToChai(chai, utils) {
 		var fake = utils.flag(this, 'object')
 		this.assert(
 		  fake.wasCalledWith.apply(fake, params)
-		, 'expected fake to have been called with #{this}'
-		, 'expected fake to not have been called with #{this}'
+		, 'expected ' + fake._name + ' to have been called with #{this}'
+		, 'expected ' + fake._name + ' to not have been called with #{this}'
 		)
 	})
 }
@@ -139,9 +139,9 @@ function createFake(target, property) {
 	}
 
 	var original
-	fake.name = 'fake'
+	fake._name = 'fake'
 	if(target && property) {
-		fake.name = property
+		fake._name = property
 		original = target[property]
 		target[property] = fake
 	}
