@@ -41,7 +41,7 @@ describe('unit/injecting-data.js', function() {
 				lastCB.should.have.been.calledWithExactly(1, 2)
 			})
 		})
-		describe('with `async: false` and no `args` option', function() {
+		describe('with `async: false` and no `arg` option', function() {
 			beforeEach(function() {
 				fake.callsArg({ async: false })
 				fake(123, 'abc', firstCB, lastCB)
@@ -49,6 +49,19 @@ describe('unit/injecting-data.js', function() {
 			it('should default to the last callback', function() {
 				expect(firstCB).to.not.have.been.called
 				expect(lastCB).to.have.been.called
+			})
+		})
+		describe('with `async: false` and `arg: 2`', function() {
+			var cb
+			beforeEach(function() {
+				cb = fzkes.fake()
+				fake.callsArg({ async: false, arg: 2 })
+				fake(123, firstCB, cb, lastCB)
+			})
+			it('should call the right callback', function() {
+				expect(firstCB).to.not.have.been.called
+				expect(cb).to.have.been.called
+				expect(lastCB).to.not.have.been.called
 			})
 		})
 	})

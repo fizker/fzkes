@@ -124,7 +124,9 @@ function createFake(target, property) {
 				break
 			case 'last':
 			default:
-				getCallback = function(args) {
+				getCallback = typeof(options.arg) == 'number'
+				? function(args) { return args[options.arg] }
+				: function(args) {
 					for(var i = args.length - 1; i >= 0; i--) {
 						if(typeof(args[i]) == 'function') {
 							return args[i]
