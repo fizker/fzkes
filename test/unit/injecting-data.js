@@ -8,6 +8,50 @@ describe('unit/injecting-data.js', function() {
 			expect(fake()).to.equal(undefined)
 		})
 	})
+	describe('When calling `callsArg()`', function() {
+		var firstCB
+		var lastCB
+		beforeEach(function() {
+			firstCB = fzkes.fake('first callback')
+			lastCB = fzkes.fake('last callback')
+		})
+		describe('with `async: false` and `arg: first`', function() {
+			beforeEach(function() {
+				fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'first' })
+				fake(123, 'abc', firstCB, lastCB)
+			})
+			it('should call the right callback', function() {
+				expect(firstCB).to.have.been.called
+				expect(lastCB).to.not.have.been.called
+			})
+			it('should pass the arguments along', function() {
+				firstCB.should.have.been.calledWithExactly(1, 2)
+			})
+		})
+		describe('with `async: false` and `arg: last`', function() {
+			beforeEach(function() {
+				fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'last' })
+				fake(123, 'abc', firstCB, lastCB)
+			})
+			it('should call the right callback', function() {
+				expect(firstCB).to.not.have.been.called
+				expect(lastCB).to.have.been.called
+			})
+			it('should pass the arguments along', function() {
+				lastCB.should.have.been.calledWithExactly(1, 2)
+			})
+		})
+		describe('with `async: false` and no `args` option', function() {
+			beforeEach(function() {
+				fake.callsArg({ async: false })
+				fake(123, 'abc', firstCB, lastCB)
+			})
+			it('should default to the last callback', function() {
+				expect(firstCB).to.not.have.been.called
+				expect(lastCB).to.have.been.called
+			})
+		})
+	})
 	describe('When calling `withArgs()`', function() {
 		var constrained
 		beforeEach(function() {

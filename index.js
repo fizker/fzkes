@@ -109,6 +109,36 @@ function createFake(target, property) {
 	fake.calls = function(fn) {
 		action = fn
 	}
+	fake.callsArg = function(options) {
+		var getCallback
+		switch(options.arg) {
+			case 'first':
+				getCallback = function(args) {
+					for(var i = 0; i < args.length; i++) {
+						if(typeof(args[i]) == 'function') {
+							return args[i]
+						}
+					}
+					return function() {}
+				}
+				break
+			case 'last':
+			default:
+				getCallback = function(args) {
+					for(var i = args.length - 1; i >= 0; i--) {
+						if(typeof(args[i]) == 'function') {
+							return args[i]
+						}
+					}
+					return function() {}
+				}
+		}
+		this.calls(function() {
+			var args = __slice.call(arguments)
+			var callback = getCallback(args)
+			callback.apply(null, options.arguments || [])
+		})
+	}
 	fake.returns = function(val) {
 		this.calls(function() { return val })
 	}
