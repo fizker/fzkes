@@ -64,6 +64,22 @@ describe('unit/injecting-data.js', function() {
 				expect(lastCB).to.not.have.been.called
 			})
 		})
+		describe('with `async: true`', function() {
+			beforeEach(function() {
+				fake.callsArg({ async: true, arguments: [1,2] })
+				fake(firstCB)
+			})
+			it('should not call it immediately', function(done) {
+				expect(firstCB).to.not.have.been.called
+				firstCB.calls(done.bind(null, null))
+			})
+			it('should still pass arguments along correctly', function(done) {
+				firstCB.calls(function() {
+					firstCB.should.have.been.calledWith(1,2)
+					done()
+				})
+			})
+		})
 	})
 	describe('When calling `withArgs()`', function() {
 		var constrained

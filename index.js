@@ -135,6 +135,18 @@ function createFake(target, property) {
 					return function() {}
 				}
 		}
+		if(options.async) {
+			var internalGetCB = getCallback
+			getCallback = function(args) {
+				var cb = internalGetCB(args)
+				return function() {
+					var args = __slice.call(arguments)
+					process.nextTick(function() {
+						cb.apply(null, args)
+					})
+				}
+			}
+		}
 		this.calls(function() {
 			var args = __slice.call(arguments)
 			var callback = getCallback(args)
