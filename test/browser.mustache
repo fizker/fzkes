@@ -1,0 +1,30 @@
+<!doctype html>
+<title>date-picker browser testing suite</title>
+<meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+
+<link rel=stylesheet href=../node_modules/mocha/mocha.css>
+
+<div id=mocha></div>
+
+<script src=../node_modules/mocha/mocha.js></script>
+
+<script>
+mocha.setup(
+	{ ui: 'bdd'
+	// We are checking for leaks in node, not in the browser (which is for
+	// cross-browser testing anyway!)
+	, ignoreLeaks: true
+	}
+);
+</script>
+<script src=../browser.js></script>
+<script src=../browser-test.js></script>
+
+<!-- Include test scripts here -->
+{{{scripts}}}
+
+<script>
+;(function() {
+	var runner = mocha.run()
+})()
+</script>

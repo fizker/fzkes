@@ -59,6 +59,19 @@ that scope.
 	fake.should.have.been.calledWith(1,2,3)
 
 
+### Running in the browser
+
+When installing the package, a convenience package is built using browserify.
+It makes the experience of using `fzkes` in the browser similar to using it with
+node; it even adds a `require` function, which responds to `require('fzkes')`.
+
+The browser-version is located in the root folder, and is called `browser.js`.
+It can either be included by a `<script src="node_modules/fzkes/browser.js"></script>`
+call, or copied to a lib-folder of your choosing.
+
+Then simply follow the guide above for setting it up and interacting with it.
+
+
 --------
 
 The text below here are from the original mission statement, and will be
