@@ -37,21 +37,24 @@ that scope.
 	fake.returns('abc')
 	fake.throws(new Error('some error'))
 	fake.calls(function() { console.log('was called') })
-	fake.withArgs(1,2).returns(3)
-	fake.withArgs(1,2).callsOriginal()
 
 	// If it replaced a function on an object:
 	fake.callsOriginal()
+
+	// Conditional injects
+	fake.withArgs(1,2).returns(3)
+	fake.withArgs(1,2).callsOriginal()
 
 
 ### Asserting
 
 	fake.wasCalled()
 	fake.wasCalledWith(1, 2, 3)
+	fake.wasCalledWithExactly(1, 2, 3)
 	fake.callCount == 2
 
 
-### Using with `chai`
+### Using with [chai](http://chaijs.com)
 
 	chai.use(fzkes.chai)
 	fake.should.have.been.called // at least once
@@ -66,8 +69,8 @@ It makes the experience of using `fzkes` in the browser similar to using it with
 node; it even adds a `require` function, which responds to `require('fzkes')`.
 
 The browser-version is located in the root folder, and is called `browser.js`.
-It can either be included by a `<script src="node_modules/fzkes/browser.js"></script>`
-call, or copied to a lib-folder of your choosing.
+It can either be included by `<script src="node_modules/fzkes/browser.js"></script>`,
+or copied to a lib-folder of your choosing.
 
 Then simply follow the guide above for setting it up and interacting with it.
 
@@ -107,16 +110,16 @@ This is a simple list of the features I want this to have:
 - <s>A way to have it execute the original function</s>
 - <s>A way to return a specific value</s>
 - <s>A way to throw a specific error</s>
-- A way to call the last function passed as a parameter (node callback style)
-- A way to call the first function passed as a parameter
-- A way to call a specific parameter as if it was a function
-- A way to call a function (any of the above) on the next tick instead of
-  immediately
+- <s>A way to call the last function passed as a parameter (node callback style)</s>
+- <s>A way to call the first function passed as a parameter</s>
+- <s>A way to call a specific parameter as if it was a function</s>
+- <s>A way to call a function (any of the above) on the next tick instead of
+  immediately</s>
 - <s>A way to restore the system after a fake</s>
-- A way to easily set up and restore multiple fakes
+- <s>A way to easily set up and restore multiple fakes</s>
 
-All the ways to inject data into the system should allow setting both future
-calls and to the last call received. The only exceptions are the throw and
+All the ways to inject data into the system should allow setting <s>both future
+calls and to</s> the last call received. The only exceptions are the throw and
 return parts, which only makes sense for future calls.
 
 <s>All ways (really all this time around) should allow for specific parameters to be
