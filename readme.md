@@ -23,8 +23,8 @@ How to use
 
 There are three ways to easily doing this, depending on the scope:
 
-Restoring a single fake: `fake.restore()`
-Restoring all fakes across the board: `fzkes.restore()`
+1. Restoring a single fake: `fake.restore()`
+2. Restoring all fakes across the board: `fzkes.restore()`
 
 The last is a bit more tricky; A sub-scope can be creating by calling `fzkes.scope()`.
 The scope have all methods (except `chai`) that the original `fzkes` object have,
@@ -44,6 +44,22 @@ that scope.
 	// Conditional injects
 	fake.withArgs(1,2).returns(3)
 	fake.withArgs(1,2).callsOriginal()
+
+### Calling callbacks
+
+	// Default is calling the last function found, node-style
+	fake.callsArg()
+
+	// It can be controlled
+	fake.callsArg({ arg: 'first' })
+	// 0-indexed argument list
+	fake.callsArg({ arg: 1 })
+
+	// It defaults to calling the callback immediately, but this can be changed
+	fake.callsArg({ async: true })
+
+	// Default is no parameters to the callback, but these can be controlled
+	fake.callsArg({ arguments: [ 1, 2 ] })
 
 
 ### Asserting
