@@ -24,11 +24,11 @@ function createFake(target, property) {
 		calls.push(args)
 		return (constrainedFakes.find(args) || action).apply(this, args)
 	}
-	fake.__defineGetter__('callCount', function() {
-		return calls.length
+	Object.defineProperty(fake, 'callCount', {
+		get: function() { return calls.length }
 	})
-	fake.__defineGetter__('_calls', function() {
-		return calls
+	Object.defineProperty(fake, '_calls', {
+		get: function() { return calls }
 	})
 	fake.calls = function(fn) {
 		action = fn
