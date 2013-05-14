@@ -8,11 +8,11 @@
   }
 , "dependencies":
   { "browserify": "~2.13.3"
-  , "glob": "~3.2.1"
   }
 , "devDependencies":
   { "chai": "~1.6.0"
   , "mocha": "~1.9.0"
+  , "glob": "~3.2.1"
   }
 , "repository":
   { "type": "git"
