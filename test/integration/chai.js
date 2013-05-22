@@ -2,7 +2,7 @@ describe('integration/chai.js', function() {
 	var fake
 	beforeEach(function() {
 		fake = fzkes.fake()
-		chai.use(fzkes.chai)
+		chai.use(fzkes)
 	})
 	describe('When asserting for `called`', function() {
 		it('should pass if the fake have been called', function() {

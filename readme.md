@@ -72,7 +72,7 @@ that scope.
 
 ### Using with [chai](http://chaijs.com)
 
-	chai.use(fzkes.chai)
+	chai.use(fzkes)
 	fake.should.have.been.called // at least once
 	fake.should.have.been.called(2) // precisely 2 times
 	fake.should.have.been.calledWith(1,2,3)

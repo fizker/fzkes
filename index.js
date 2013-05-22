@@ -1,10 +1,13 @@
-module.exports =
-{ fake: createFake
-, scope: createScope
-, restore: restoreAll
-, chai: require('./src/chai')
-, version: require('./package.json').version
+module.exports = require('./src/chai')
+
+module.exports.fake = createFake
+module.exports.scope = createScope
+module.exports.restore = restoreAll
+module.exports.chai = function() {
+	console.warn('`chai.use(fzkes.chai)` is deprecated, please use `chai.use(fzkes)` going forward.')
+	module.exports.apply(null, arguments)
 }
+module.exports.version = require('./package.json').version
 
 var __slice = Array.prototype.slice
 var getFake = require('./src/fake')
