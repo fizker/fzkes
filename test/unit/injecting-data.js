@@ -182,6 +182,18 @@ describe('unit/injecting-data.js', function() {
 			fake(1,2,'abc')
 			expect(params).to.deep.equal([1,2,'abc'])
 		})
+		describe('and then calling with `null` as the argument', function() {
+			beforeEach(function() {
+				fake()
+				fake.calls(null)
+			})
+			it('should start stacking unhandled functions', function() {
+				fake.call()
+				expect(function() {
+					fake.calls(function() {}, { now: true })
+				}).not.to.throw()
+			})
+		})
 	})
 	describe('When calling `calls()` with `now: true` option', function() {
 		var fn

@@ -25,6 +25,24 @@ describe('unit/faking.js', function() {
 				fn.should.have.been.called
 			})
 		})
+		describe('and calling `callsOriginal({ now: true })`', function() {
+			describe('before a call is registered', function() {
+				it('should throw an exception', function() {
+					expect(function() {
+						fake.callsOriginal({ now: true })
+					}).to.throw()
+				})
+			})
+			describe('after a call is registered', function() {
+				beforeEach(function() {
+					fake(1, 'a')
+					fake.callsOriginal({ now: true })
+				})
+				it('should call the original with the params', function() {
+					fn.should.have.been.calledWith(1, 'a')
+				})
+			})
+		})
 		describe('and `restore` is called on the fake', function() {
 			beforeEach(function() {
 				fake.restore()

@@ -40,7 +40,7 @@ function createFake(target, property) {
 		if(options && options.now) {
 			var lastCall = unhandledCalls.shift()
 			if(!lastCall) {
-				throw new Error('No calls registered on the fake')
+				throw new Error('No unhandled calls registered on the fake')
 			}
 			fn.apply(null, lastCall)
 			return
@@ -131,8 +131,8 @@ function createFake(target, property) {
 			target[property] = original
 		}
 	}
-	fake.callsOriginal = function() {
-		this.calls(original)
+	fake.callsOriginal = function(options) {
+		this.calls(original, options)
 	}
 
 	var original
