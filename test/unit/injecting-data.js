@@ -158,20 +158,58 @@ describe('unit/injecting-data.js', function() {
 			fake(1,2,'abc')
 			expect(params).to.deep.equal([1,2,'abc'])
 		})
-		describe('with `now: true` option', function() {
+	})
+	describe('When calling `calls()` with `now: true` option', function() {
+		var fn
+		beforeEach(function() {
+			fake = fzkes.fake()
+			fn = fzkes.fake()
+		})
+		describe('with a single call', function() {
 			beforeEach(function() {
-				fake = fzkes.fake()
 				fake(123, 'abc')
-				fake.calls(function() {
-					wasCalled = true
-					params = Array.prototype.slice.call(arguments)
-				}, { now: true })
+				fake.calls(fn, { now: true })
 			})
 			it('should call the function', function() {
-				wasCalled.should.be.true
+				fn.should.have.been.called
 			})
 			it('should pass the parameters', function() {
-				expect(params).to.deep.equal([ 123, 'abc' ])
+				fn.should.have.been.calledWith(123, 'abc')
+			})
+		})
+		describe('with two calls', function() {
+			beforeEach(function() {
+				fake(1, 'a')
+				fake(2, 'b')
+			})
+			it('should emulate the first call first', function() {
+				fake.calls(fn, { now: true })
+				fn.should.have.been.calledWith(1, 'a')
+			})
+			it('should emulate the second call next', function() {
+				fake.calls(function() {}, { now: true })
+				fake.calls(fn, { now: true })
+				fn.should.have.been.calledWith(2, 'b')
+			})
+			it('should throw on the third attempt', function() {
+				fake.calls(function() {}, { now: true })
+				fake.calls(function() {}, { now: true })
+				expect(function() {
+					fake.calls(fn, { now: true })
+				}).to.throw()
+			})
+		})
+		describe('with no calls', function() {
+			it('should throw an exception', function() {
+				expect(function() {
+					fake.calls(fn, { now: true })
+				}).to.throw()
+			})
+			it('should not call the passed function', function() {
+				try {
+					fake.calls(fn, { now: true })
+				} catch(e) {}
+				fn.should.not.have.been.called
 			})
 		})
 	})

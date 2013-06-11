@@ -3,8 +3,9 @@ module.exports = createFake
 var __slice = Array.prototype.slice
 
 function createFake(target, property) {
-	var action = function() {}
+	var action = null
 	var calls = []
+	var unhandledCalls = []
 	var constrainedFakes = []
 	constrainedFakes.find = function(args, options) {
 		options = options || {}
@@ -21,8 +22,13 @@ function createFake(target, property) {
 
 	var fake = function() {
 		var args = __slice.call(arguments)
+		var act = constrainedFakes.find(args) || action
 		calls.push(args)
-		return (constrainedFakes.find(args) || action).apply(this, args)
+		if(!act) {
+			unhandledCalls.push(args)
+			return
+		}
+		return act.apply(this, args)
 	}
 	Object.defineProperty(fake, 'callCount', {
 		get: function() { return calls.length }
@@ -32,7 +38,10 @@ function createFake(target, property) {
 	})
 	fake.calls = function(fn, options) {
 		if(options && options.now) {
-			var lastCall = calls[0]
+			var lastCall = unhandledCalls.shift()
+			if(!lastCall) {
+				throw new Error('No calls registered on the fake')
+			}
 			fn.apply(null, lastCall)
 			return
 		}
