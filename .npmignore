@@ -1,4 +1,6 @@
 browser.js
 browser-test.js
+browser-test-setup.js
+karma.conf.js
 test/browser.html
 test
