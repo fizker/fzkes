@@ -135,7 +135,7 @@ describe('unit/injecting-data.js', function() {
 			})
 		})
 	})
-	describe('When asking a fake to call a specific function', function() {
+	describe('When calling `calls()`', function() {
 		var wasCalled
 		var params
 		beforeEach(function() {
@@ -157,6 +157,22 @@ describe('unit/injecting-data.js', function() {
 		it('should pass all parameters', function() {
 			fake(1,2,'abc')
 			expect(params).to.deep.equal([1,2,'abc'])
+		})
+		describe('with `now: true` option', function() {
+			beforeEach(function() {
+				fake = fzkes.fake()
+				fake(123, 'abc')
+				fake.calls(function() {
+					wasCalled = true
+					params = Array.prototype.slice.call(arguments)
+				}, { now: true })
+			})
+			it('should call the function', function() {
+				wasCalled.should.be.true
+			})
+			it('should pass the parameters', function() {
+				expect(params).to.deep.equal([ 123, 'abc' ])
+			})
 		})
 	})
 	describe('When asking a fake to return values', function() {

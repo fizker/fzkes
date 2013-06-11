@@ -30,7 +30,12 @@ function createFake(target, property) {
 	Object.defineProperty(fake, '_calls', {
 		get: function() { return calls }
 	})
-	fake.calls = function(fn) {
+	fake.calls = function(fn, options) {
+		if(options && options.now) {
+			var lastCall = calls[0]
+			fn.apply(null, lastCall)
+			return
+		}
 		action = fn
 	}
 	fake.callsArg = function(options) {
