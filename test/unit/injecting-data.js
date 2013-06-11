@@ -80,6 +80,30 @@ describe('unit/injecting-data.js', function() {
 				})
 			})
 		})
+		describe('with `now: true`', function() {
+			beforeEach(function() {
+				fake(firstCB)
+				fake.callsArg({ now: true })
+			})
+			it('should be called immediately', function() {
+				firstCB.should.have.been.called
+			})
+		})
+		describe('with `now: true` and `async: true`', function() {
+			beforeEach(function() {
+				fake(firstCB)
+				fake.callsArg({ now: true, async: true, arguments: [ 1, 2 ] })
+			})
+			it('should not call the callback immediately', function() {
+				firstCB.should.not.have.been.called
+			})
+			it('should still pass arguments along', function(done) {
+				firstCB.calls(function() {
+					firstCB.should.have.been.calledWith(1, 2)
+					done()
+				})
+			})
+		})
 	})
 	describe('When calling `withArgs()`', function() {
 		var constrained
@@ -135,7 +159,7 @@ describe('unit/injecting-data.js', function() {
 			})
 		})
 	})
-	describe('When asking a fake to call a specific function', function() {
+	describe('When calling `calls()`', function() {
 		var wasCalled
 		var params
 		beforeEach(function() {
@@ -157,6 +181,82 @@ describe('unit/injecting-data.js', function() {
 		it('should pass all parameters', function() {
 			fake(1,2,'abc')
 			expect(params).to.deep.equal([1,2,'abc'])
+		})
+		describe('and then calling with `null` as the argument', function() {
+			beforeEach(function() {
+				fake()
+				fake.calls(null)
+			})
+			it('should start stacking unhandled functions', function() {
+				fake.call()
+				expect(function() {
+					fake.calls(function() {}, { now: true })
+				}).not.to.throw()
+			})
+		})
+	})
+	describe('When calling `calls()` with `now: true` option', function() {
+		var fn
+		beforeEach(function() {
+			fake = fzkes.fake()
+			fn = fzkes.fake()
+		})
+		describe('with a single call', function() {
+			beforeEach(function() {
+				fake(123, 'abc')
+				fake.calls(fn, { now: true })
+			})
+			it('should call the function', function() {
+				fn.should.have.been.called
+			})
+			it('should pass the parameters', function() {
+				fn.should.have.been.calledWith(123, 'abc')
+			})
+		})
+		describe('with two calls', function() {
+			beforeEach(function() {
+				fake(1, 'a')
+				fake(2, 'b')
+			})
+			it('should emulate the first call first', function() {
+				fake.calls(fn, { now: true })
+				fn.should.have.been.calledWith(1, 'a')
+			})
+			it('should emulate the second call next', function() {
+				fake.calls(function() {}, { now: true })
+				fake.calls(fn, { now: true })
+				fn.should.have.been.calledWith(2, 'b')
+			})
+			it('should throw on the third attempt', function() {
+				fake.calls(function() {}, { now: true })
+				fake.calls(function() {}, { now: true })
+				expect(function() {
+					fake.calls(fn, { now: true })
+				}).to.throw()
+			})
+		})
+		describe('with no calls', function() {
+			it('should throw an exception', function() {
+				expect(function() {
+					fake.calls(fn, { now: true })
+				}).to.throw()
+			})
+			it('should not call the passed function', function() {
+				try {
+					fake.calls(fn, { now: true })
+				} catch(e) {}
+				fn.should.not.have.been.called
+			})
+		})
+		describe('with the fake called after calling `calls()`', function() {
+			beforeEach(function() {
+				fake(1, 'a')
+				fake.calls(fn, { now: true })
+				fake(2, 'a')
+			})
+			it('should not catch subsequent calls', function() {
+				expect(fn.callCount).to.equal(1)
+			})
 		})
 	})
 	describe('When asking a fake to return values', function() {

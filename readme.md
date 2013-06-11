@@ -45,6 +45,7 @@ that scope.
 	fake.withArgs(1,2).returns(3)
 	fake.withArgs(1,2).callsOriginal()
 
+
 ### Calling callbacks
 
 	// Default is calling the last function found, node-style
@@ -60,6 +61,42 @@ that scope.
 
 	// Default is no parameters to the callback, but these can be controlled
 	fake.callsArg({ arguments: [ 1, 2 ] })
+
+
+### Emulating calls after they have been called
+
+Sometimes, it is not feasible to prepare the fake properly; in these cases,
+emulating the call after the fact makes the code much better.
+
+`fzkes` supports this as an option for the `fake.calls()`, `fake.callsArg()` and
+`fake.callsOriginal()` functions.
+
+The code would look as the following:
+
+	fake(1,2,3)
+
+	fake.calls(fn, { now: true })
+	fake.callsOriginal({ now: true })
+	fake.callsArg({ now: true })
+
+It works with all other options on the `fake.callsArg()` call.
+
+It forwards the next unhandled call as it appeared on the `fake`, and throws an
+exception if there are no unhandled calls:
+
+	fake(1,2,3)
+	// Goes through
+	fake.callsOriginal({ now: true })
+
+	try {
+		fake.calls(fn, { now: true })
+	} catch(e) {
+		// e.message would say that fake had no unhandled calls.
+	}
+
+If any of the functions was called without `{ now: true }`, calls are not
+considered unhandled, and any call with `{ now: true }` will throw an exception.
+To begin building unhandled calls, make a `fake.calls(null)` invocation.
 
 
 ### Asserting

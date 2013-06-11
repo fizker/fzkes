@@ -3,8 +3,9 @@ module.exports = createFake
 var __slice = Array.prototype.slice
 
 function createFake(target, property) {
-	var action = function() {}
+	var action = null
 	var calls = []
+	var unhandledCalls = []
 	var constrainedFakes = []
 	constrainedFakes.find = function(args, options) {
 		options = options || {}
@@ -21,8 +22,13 @@ function createFake(target, property) {
 
 	var fake = function() {
 		var args = __slice.call(arguments)
+		var act = constrainedFakes.find(args) || action
 		calls.push(args)
-		return (constrainedFakes.find(args) || action).apply(this, args)
+		if(!act) {
+			unhandledCalls.push(args)
+			return
+		}
+		return act.apply(this, args)
 	}
 	Object.defineProperty(fake, 'callCount', {
 		get: function() { return calls.length }
@@ -30,7 +36,15 @@ function createFake(target, property) {
 	Object.defineProperty(fake, '_calls', {
 		get: function() { return calls }
 	})
-	fake.calls = function(fn) {
+	fake.calls = function(fn, options) {
+		if(options && options.now) {
+			var lastCall = unhandledCalls.shift()
+			if(!lastCall) {
+				throw new Error('No unhandled calls registered on the fake')
+			}
+			fn.apply(null, lastCall)
+			return
+		}
 		action = fn
 	}
 	fake.callsArg = function(options) {
@@ -75,7 +89,7 @@ function createFake(target, property) {
 			var args = __slice.call(arguments)
 			var callback = getCallback(args)
 			callback.apply(null, options.arguments || [])
-		})
+		}, { now: options.now })
 	}
 	fake.returns = function(val) {
 		this.calls(function() { return val })
@@ -117,8 +131,8 @@ function createFake(target, property) {
 			target[property] = original
 		}
 	}
-	fake.callsOriginal = function() {
-		this.calls(original)
+	fake.callsOriginal = function(options) {
+		this.calls(original, options)
 	}
 
 	var original
