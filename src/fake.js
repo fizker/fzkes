@@ -89,7 +89,7 @@ function createFake(target, property) {
 			var args = __slice.call(arguments)
 			var callback = getCallback(args)
 			callback.apply(null, options.arguments || [])
-		})
+		}, { now: options.now })
 	}
 	fake.returns = function(val) {
 		this.calls(function() { return val })

@@ -80,6 +80,30 @@ describe('unit/injecting-data.js', function() {
 				})
 			})
 		})
+		describe('with `now: true`', function() {
+			beforeEach(function() {
+				fake(firstCB)
+				fake.callsArg({ now: true })
+			})
+			it('should be called immediately', function() {
+				firstCB.should.have.been.called
+			})
+		})
+		describe('with `now: true` and `async: true`', function() {
+			beforeEach(function() {
+				fake(firstCB)
+				fake.callsArg({ now: true, async: true, arguments: [ 1, 2 ] })
+			})
+			it('should not call the callback immediately', function() {
+				firstCB.should.not.have.been.called
+			})
+			it('should still pass arguments along', function(done) {
+				firstCB.calls(function() {
+					firstCB.should.have.been.calledWith(1, 2)
+					done()
+				})
+			})
+		})
 	})
 	describe('When calling `withArgs()`', function() {
 		var constrained
@@ -210,6 +234,16 @@ describe('unit/injecting-data.js', function() {
 					fake.calls(fn, { now: true })
 				} catch(e) {}
 				fn.should.not.have.been.called
+			})
+		})
+		describe('with the fake called after calling `calls()`', function() {
+			beforeEach(function() {
+				fake(1, 'a')
+				fake.calls(fn, { now: true })
+				fake(2, 'a')
+			})
+			it('should not catch subsequent calls', function() {
+				expect(fn.callCount).to.equal(1)
 			})
 		})
 	})
