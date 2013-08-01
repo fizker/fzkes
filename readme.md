@@ -94,9 +94,23 @@ exception if there are no unhandled calls:
 		// e.message would say that fake had no unhandled calls.
 	}
 
-If any of the functions was called without `{ now: true }`, calls are not
-considered unhandled, and any call with `{ now: true }` will throw an exception.
+If any of the functions was set up in advance, calls are not considered
+unhandled, and any call with `{ now: true }` will throw an exception.
 To begin building unhandled calls, make a `fake.calls(null)` invocation.
+
+	fake.callsOriginal()
+	// this call is handled immediately
+	fake()
+	expect(function() {
+		fake.callsOriginal({ now: true })
+	}).to.throw()
+
+	// resetting the expectations
+	fake.calls(null)
+
+	// it now works again
+	fake()
+	fake.callsOriginal({ now: true })
 
 
 ### Asserting
