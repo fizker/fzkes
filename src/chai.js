@@ -23,20 +23,36 @@ function attachToChai(chai, utils) {
 	})
 	chai.Assertion.addMethod('calledWith', function() {
 		var params = __slice.call(arguments)
+		var paramsAsString = formatCall(params)
 		var fake = utils.flag(this, 'object')
+		var callsAsString = formatCalls(fake._calls)
 		this.assert(
 		  fake.wasCalledWith.apply(fake, params)
-		, 'expected `' + fake._name + '` to have been called with #{this}'
-		, 'expected `' + fake._name + '` to not have been called with #{this}'
+		, 'expected `' + fake._name + '` to have been called with ' + paramsAsString + callsAsString
+		, 'expected `' + fake._name + '` to not have been called with ' + paramsAsString
 		)
 	})
 	chai.Assertion.addMethod('calledWithExactly', function() {
 		var params = __slice.call(arguments)
+		var paramsAsString = formatCall(params)
 		var fake = utils.flag(this, 'object')
+		var callsAsString = formatCalls(fake._calls)
 		this.assert(
 		  fake.wasCalledWithExactly.apply(fake, params)
-		, 'expected `' + fake._name + '` to have been called with exactly #{this}'
-		, 'expected `' + fake._name + '` to not have been called with exactly #{this}'
+		, 'expected `' + fake._name + '` to have been called with exactly ' + paramsAsString + callsAsString
+		, 'expected `' + fake._name + '` to not have been called with exactly ' + paramsAsString
 		)
 	})
+
+	function formatCall(params) {
+		return JSON.stringify(params)
+	}
+	function formatCalls(calls) {
+		calls = calls.map(formatCall)
+		var callsAsString = ', but was never called'
+		if(calls.length) {
+			callsAsString = ', but was called with:\n' + calls.join('\n')
+		}
+		return callsAsString
+	}
 }

@@ -65,14 +65,36 @@ describe('integration/chai.js', function() {
 				expect(fake).to.have.been.calledWith(1, 2)
 			}).not.to.throw()
 		})
-		it('should fail if the parameters does not match', function() {
-			fake(1, 2)
-			expect(function() {
-				expect(fake).to.have.been.calledWith('a', 'b')
-			}).to.throw()
+		describe('and failing', function() {
+			beforeEach(function() {
+				fake(1, 2)
+			})
+			it('should throw', function() {
+				expect(function() {
+					expect(fake).to.have.been.calledWith('a', 'b')
+				}).to.throw()
+			})
+			describe('then the error-message', function() {
+				var error
+				beforeEach(function() {
+					try {
+						expect(fake).to.have.been.calledWith('a', 'b')
+					} catch(e) {
+						error = e
+					}
+				})
+				it('should tell what it was expecting', function() {
+					expect(error.message)
+						.to.match(/^expected `fake` to have been called with \["a","b"\]/)
+				})
+				it('should tell what it was called with', function() {
+					expect(error.message)
+						.to.match(/but was called with:\n\[1,2\]/)
+				})
+			})
 		})
 		describe('and using `not`', function() {
-			it('should not pass if the parameters match', function() {
+			it('should fail if the parameters match', function() {
 				fake(1, 2)
 				expect(function() {
 					expect(fake).not.to.have.been.calledWith(1, 2)
