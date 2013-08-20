@@ -132,11 +132,14 @@ To begin building unhandled calls, make a `fake.calls(null)` invocation.
 ### Running in the browser
 
 When installing the package, a convenience package is built using browserify.
-It makes the experience of using `fzkes` in the browser similar to using it with
-node; it even adds a `require` function, which responds to `require('fzkes')`.
+It adds both an AMD wrapper for use with `require` or a similar tool, and a
+global version if neither `node` nor `AMD` is detected.
 
 The browser-version is located in the root folder, and is called `browser.js`.
 It can either be included by `<script src="node_modules/fzkes/browser.js"></script>`,
 or copied to a lib-folder of your choosing.
 
 Then simply follow the guide above for setting it up and interacting with it.
+
+__NOTE:__ The 0.10 version of `browser.js` is incompatible with earlier versions,
+because of how it is now wrapped. This should be for the better though.
