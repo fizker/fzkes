@@ -11,7 +11,6 @@ files =
 [ MOCHA
 , MOCHA_ADAPTER
 , 'browser-test-setup.js'
-, 'browser.js'
 , 'browser-test.js'
 , 'test/*/**/*.js'
 ]
@@ -55,7 +54,7 @@ autoWatch = true
 // - Safari (only Mac)
 // - PhantomJS
 // - IE (only Windows)
-browsers = ['Chrome', 'Firefox']
+browsers = []
 
 
 // If browser does not capture in given timeout [ms], kill it
