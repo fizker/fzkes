@@ -45,6 +45,26 @@ that scope.
 	fake.withArgs(1,2).returns(3)
 	fake.withArgs(1,2).callsOriginal()
 
+Each action (`returns`, `throws`, `calls`, etc) returns the fake, to make it
+easier to assign to return values and the like:
+
+	fake.returns({
+		a: fzkes.fake('a').returns(3),
+		b: fzkes.fake('b').throws()
+	})
+
+It can also chain the withArgs() automatically:
+
+	var fake = fzkes.fake('name')
+		.returns(1)
+		.withArgs(1,2).returns(3)
+		.withArgs(1,3).returns(4)
+		.withArgs(1,4).throws(new Error('some error'))
+	fake(1,1) // => 1
+	fake(1,2) // => 3
+	fake(1,3) // => 4
+	fake(1,4) // => throws
+
 
 ### Calling callbacks
 

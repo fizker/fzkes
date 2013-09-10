@@ -17,12 +17,17 @@ describe('unit/faking.js', function() {
 			fn.should.not.have.been.called
 		})
 		describe('and it is told to `callsOriginal()`', function() {
+			var returnValue
 			beforeEach(function() {
-				fake.callsOriginal()
+				returnValue = fake.callsOriginal()
 			})
 			it('should call the original', function() {
 				obj.a()
 				fn.should.have.been.called
+			})
+			it('should return the fake', function() {
+				expect(returnValue)
+					.to.equal(fake)
 			})
 		})
 		describe('and calling `callsOriginal({ now: true })`', function() {

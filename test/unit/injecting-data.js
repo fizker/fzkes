@@ -11,14 +11,19 @@ describe('unit/injecting-data.js', function() {
 	describe('When calling `callsArg()`', function() {
 		var firstCB
 		var lastCB
+		var returnValue
 		beforeEach(function() {
+			returnValue = null
 			firstCB = fzkes.fake('first callback')
 			lastCB = fzkes.fake('last callback')
 		})
 		describe('with `async: false` and `arg: first`', function() {
 			beforeEach(function() {
-				fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'first' })
+				returnValue = fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'first' })
 				fake(123, 'abc', firstCB, lastCB)
+			})
+			it('should return the fake', function() {
+				expect(returnValue).to.equal(fake)
 			})
 			it('should call the right callback', function() {
 				expect(firstCB).to.have.been.called
@@ -30,8 +35,11 @@ describe('unit/injecting-data.js', function() {
 		})
 		describe('with `async: false` and `arg: last`', function() {
 			beforeEach(function() {
-				fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'last' })
+				returnValue = fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'last' })
 				fake(123, 'abc', firstCB, lastCB)
+			})
+			it('should return the fake', function() {
+				expect(returnValue).to.equal(fake)
 			})
 			it('should call the right callback', function() {
 				expect(firstCB).to.not.have.been.called
@@ -43,8 +51,11 @@ describe('unit/injecting-data.js', function() {
 		})
 		describe('with `async: false` and no `arg` option', function() {
 			beforeEach(function() {
-				fake.callsArg({ async: false })
+				returnValue = fake.callsArg({ async: false })
 				fake(123, 'abc', firstCB, lastCB)
+			})
+			it('should return the fake', function() {
+				expect(returnValue).to.equal(fake)
 			})
 			it('should default to the last callback', function() {
 				expect(firstCB).to.not.have.been.called
@@ -55,8 +66,11 @@ describe('unit/injecting-data.js', function() {
 			var cb
 			beforeEach(function() {
 				cb = fzkes.fake()
-				fake.callsArg({ async: false, arg: 2 })
+				returnValue = fake.callsArg({ async: false, arg: 2 })
 				fake(123, firstCB, cb, lastCB)
+			})
+			it('should return the fake', function() {
+				expect(returnValue).to.equal(fake)
 			})
 			it('should call the right callback', function() {
 				expect(firstCB).to.not.have.been.called
@@ -66,8 +80,11 @@ describe('unit/injecting-data.js', function() {
 		})
 		describe('with `async: true`', function() {
 			beforeEach(function() {
-				fake.callsArg({ async: true, arguments: [1,2] })
+				returnValue = fake.callsArg({ async: true, arguments: [1,2] })
 				fake(firstCB)
+			})
+			it('should return the fake', function() {
+				expect(returnValue).to.equal(fake)
 			})
 			it('should not call it immediately', function(done) {
 				expect(firstCB).to.not.have.been.called
@@ -83,7 +100,10 @@ describe('unit/injecting-data.js', function() {
 		describe('with `now: true`', function() {
 			beforeEach(function() {
 				fake(firstCB)
-				fake.callsArg({ now: true })
+				returnValue = fake.callsArg({ now: true })
+			})
+			it('should return the fake', function() {
+				expect(returnValue).to.equal(fake)
 			})
 			it('should be called immediately', function() {
 				firstCB.should.have.been.called
@@ -92,7 +112,10 @@ describe('unit/injecting-data.js', function() {
 		describe('with `now: true` and `async: true`', function() {
 			beforeEach(function() {
 				fake(firstCB)
-				fake.callsArg({ now: true, async: true, arguments: [ 1, 2 ] })
+				returnValue = fake.callsArg({ now: true, async: true, arguments: [ 1, 2 ] })
+			})
+			it('should return the fake', function() {
+				expect(returnValue).to.equal(fake)
 			})
 			it('should not call the callback immediately', function() {
 				firstCB.should.not.have.been.called
@@ -123,6 +146,9 @@ describe('unit/injecting-data.js', function() {
 			})
 			it('should return the specific even if more argments are passed than required', function() {
 				expect(fake(1,2,3)).to.equal('abc')
+			})
+			it('should return the original fake', function() {
+				expect(constrained.returns('abc')).to.equal(fake)
 			})
 		})
 		describe('with the same args', function() {
@@ -162,10 +188,11 @@ describe('unit/injecting-data.js', function() {
 	describe('When calling `calls()`', function() {
 		var wasCalled
 		var params
+		var returnValue
 		beforeEach(function() {
 			wasCalled = false
 			params = null
-			fake.calls(function() {
+			returnValue = fake.calls(function() {
 				wasCalled = true
 				params = Array.prototype.slice.call(arguments)
 				return 123
@@ -181,6 +208,9 @@ describe('unit/injecting-data.js', function() {
 		it('should pass all parameters', function() {
 			fake(1,2,'abc')
 			expect(params).to.deep.equal([1,2,'abc'])
+		})
+		it('should return the fake', function() {
+			expect(returnValue).to.equal(fake)
 		})
 		describe('and then calling with `null` as the argument', function() {
 			beforeEach(function() {
@@ -202,15 +232,19 @@ describe('unit/injecting-data.js', function() {
 			fn = fzkes.fake()
 		})
 		describe('with a single call', function() {
+			var returnValue
 			beforeEach(function() {
 				fake(123, 'abc')
-				fake.calls(fn, { now: true })
+				returnValue = fake.calls(fn, { now: true })
 			})
 			it('should call the function', function() {
 				fn.should.have.been.called
 			})
 			it('should pass the parameters', function() {
 				fn.should.have.been.calledWith(123, 'abc')
+			})
+			it('should return the fake', function() {
+				expect(returnValue).to.equal(fake)
 			})
 		})
 		describe('with two calls', function() {
@@ -260,12 +294,18 @@ describe('unit/injecting-data.js', function() {
 		})
 	})
 	describe('When asking a fake to return values', function() {
-		it('should then return the requested value', function() {
+		it('should return the requested value when called', function() {
 			fake.returns('abc')
 			expect(fake()).to.equal('abc')
 		})
+		it('should return the fake when setting up', function() {
+			expect(fake.returns('abc')).to.equal(fake)
+		})
 	})
 	describe('When asking a fake to throw', function() {
+		it('should return the fake', function() {
+			expect(fake.throws()).to.equal(fake)
+		})
 		it('should do that', function() {
 			fake.throws()
 			expect(function() { fake() }).to.throw()

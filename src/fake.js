@@ -43,9 +43,10 @@ function createFake(target, property) {
 				throw new Error('No unhandled calls registered on the fake')
 			}
 			fn.apply(null, lastCall)
-			return
+			return this
 		}
 		action = fn
+		return this
 	}
 	fake.callsArg = function(options) {
 		var getCallback
@@ -85,17 +86,17 @@ function createFake(target, property) {
 				}
 			}
 		}
-		this.calls(function() {
+		return this.calls(function() {
 			var args = __slice.call(arguments)
 			var callback = getCallback(args)
 			callback.apply(null, options.arguments || [])
 		}, { now: options.now })
 	}
 	fake.returns = function(val) {
-		this.calls(function() { return val })
+		return this.calls(function() { return val })
 	}
 	fake.throws = function(val) {
-		this.calls(function() { throw val || new Error })
+		return this.calls(function() { throw val || new Error })
 	}
 	fake.wasCalled = function() {
 		return !!fake.callCount
@@ -124,6 +125,11 @@ function createFake(target, property) {
 		, fake: newFake
 		})
 		constrainedFakes.sort(constrainedFakesSorter)
+		var oldCalls = newFake.calls
+		newFake.calls = function() {
+			oldCalls.apply(this, arguments)
+			return fake
+		}
 		return newFake
 	}
 	fake.restore = function() {
@@ -132,7 +138,7 @@ function createFake(target, property) {
 		}
 	}
 	fake.callsOriginal = function(options) {
-		this.calls(original, options)
+		return this.calls(original, options)
 	}
 
 	var original
