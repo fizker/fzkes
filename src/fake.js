@@ -1,28 +1,29 @@
 module.exports = createFake
 
 var __slice = Array.prototype.slice
+var __find = Array.prototype.find || function find(fn, ctx) {
+	var l = this.length
+	for(var i = 0; i < l; i++) {
+		var o = this[i]
+		if(fn.call(ctx, o, i, this)) {
+			return o.fake
+		}
+	}
+	return null
+}
 
 function createFake(target, property) {
 	var action = null
 	var calls = []
 	var unhandledCalls = []
 	var constrainedFakes = []
-	constrainedFakes.find = function(args, options) {
-		options = options || {}
-		var fake
-		if(!constrainedFakes.some(function(f) {
-			fake = f.fake
-			if(options.exactMatch && f.args.length != args.length) {
-				return false
-			}
-			return compareArrays(f.args, args)
-		})) { fake = null }
-		return fake
-	}
+	constrainedFakes.find = __find
 
 	var fake = function() {
 		var args = __slice.call(arguments)
-		var act = constrainedFakes.find(args) || action
+		var act = constrainedFakes.find(function(f) {
+			return compareArrays(f.args, args)
+		}) || action
 		calls.push(args)
 		if(!act) {
 			unhandledCalls.push(args)
@@ -115,7 +116,9 @@ function createFake(target, property) {
 	}
 	fake.withArgs = function() {
 		var args = __slice.call(arguments)
-		var newFake = constrainedFakes.find(args, { exactMatch: true })
+		var newFake = constrainedFakes.find(function(f) {
+			return f.args.length == args.length && compareArrays(f.args, args)
+		})
 		if(newFake) {
 			return newFake
 		}
