@@ -66,6 +66,24 @@ It can also chain the withArgs() automatically:
 	fake(1,4) // => throws
 
 
+#### Advanced `withArgs`
+
+There is a more advanced form of `withArgs` called `withComplexArgs`.
+It allows for skipping arguments entirely, as well as defining regular expressions
+to validate against strings.
+
+	var fake = fzkes.fake('name')
+		.returns(1)
+		.withComplexArgs(null, { value: 2 }).returns(2)
+		.withComplexArgs({ regex: /ab?c/ }).returns(3)
+
+	fake(1, 1) // => 1
+	fake(1, 2) // => 2
+	fake('a', 2) // => 2
+	fake('abc') // => 3
+	fake('ac') // => 3
+
+
 ### Calling callbacks
 
 	// Default is calling the last function found, node-style

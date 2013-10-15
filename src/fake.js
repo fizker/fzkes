@@ -11,6 +11,7 @@ var __find = Array.prototype.find || function find(fn, ctx) {
 	}
 	return null
 }
+var __map = Array.prototype.map
 
 function createFake(target, property) {
 	var action = null
@@ -22,7 +23,13 @@ function createFake(target, property) {
 	var fake = function() {
 		var args = __slice.call(arguments)
 		var act = constrainedFakes.find(function(f) {
-			return compareArrays(f.args, args)
+			return f.args.every(function(arg, i) {
+				if(!arg) return true
+				var val = args[i]
+				if(arg.regex) return typeof(val) == 'string' && arg.regex.test(val)
+				if(arg.value) return compareObjects(arg.value, val)
+				return true
+			})
 		}) || action
 		calls.push(args)
 		if(!act) {
@@ -115,9 +122,15 @@ function createFake(target, property) {
 		})
 	}
 	fake.withArgs = function() {
+		return this.withComplexArgs.apply(this, __map.call(arguments, function(val) { return { value: val } }))
+	}
+	fake.withComplexArgs = function() {
 		var args = __slice.call(arguments)
 		var newFake = constrainedFakes.find(function(f) {
-			return f.args.length == args.length && compareArrays(f.args, args)
+			if(f.args.length != args.length) {
+				return false
+			}
+			return compareArrays(f.args, args)
 		})
 		if(newFake) {
 			return newFake

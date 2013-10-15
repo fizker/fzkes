@@ -185,6 +185,72 @@ describe('unit/injecting-data.js', function() {
 			})
 		})
 	})
+	describe('When calling `withComplexArgs()`', function() {
+		var constrained
+		beforeEach(function() {
+			constrained = fake.withComplexArgs({ value: null }, null, { value: 2 }, { regex: /ab?c/ })
+			fake.returns(1)
+		})
+		describe('with a null value', function() {
+			beforeEach(function() {
+				constrained = fake.withComplexArgs(null, { value: 2 })
+				constrained.returns(2)
+			})
+			it('should ignore the first parameter for the match', function() {
+				expect(fake(2,1)).to.equal(1)
+				expect(fake(1,2)).to.equal(2)
+			})
+		})
+		describe('with no known properties set', function() {
+			beforeEach(function() {
+				constrained = fake.withComplexArgs({ abc: 123 })
+				constrained.returns(2)
+			})
+			it('should return constrained value', function() {
+				expect(fake({})).to.equal(2)
+			})
+		})
+		describe('with `value` property set', function() {
+			beforeEach(function() {
+				constrained = fake.withComplexArgs({ value: 1 }, { value: 2 })
+				constrained.returns(2)
+			})
+			it('should match for those arguments', function() {
+				expect(fake(1,2)).to.equal(2)
+				expect(fake(2,1)).to.equal(1)
+			})
+		})
+		describe('with `regex` property set', function() {
+			beforeEach(function() {
+				constrained = fake.withComplexArgs({ regex: /ab?c/ })
+				constrained.returns(2)
+			})
+			describe('and the regex match', function() {
+				it('should return constrained value', function() {
+					expect(fake('ac')).to.equal(2)
+				})
+			})
+			describe('and the regex does not match', function() {
+				it('should not return constrained value', function() {
+					expect(fake('ad')).to.equal(1)
+				})
+			})
+			describe('and the function is called with a non-string', function() {
+				it('should not return constrained value', function() {
+					expect(fake({toString:function() {return 'ac'}})).to.equal(1)
+				})
+			})
+		})
+		describe('with the same args', function() {
+			beforeEach(function() {
+				constrained = fake.withComplexArgs({ regex: /abc/ }, { value: 123 })
+			})
+			it('should return the same constrained fake', function() {
+				expect(fake.withComplexArgs({ regex: /abc/ }, { value: 123 }))
+					.to.equal(constrained)
+			})
+		})
+	})
 	describe('When calling `calls()`', function() {
 		var wasCalled
 		var params
