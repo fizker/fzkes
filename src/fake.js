@@ -58,6 +58,7 @@ function createFake(target, property) {
 	}
 	fake.callsArg = function(options) {
 		var getCallback
+		if(!options) options = {}
 		switch(options.arg) {
 			case 'first':
 				getCallback = function(args) {

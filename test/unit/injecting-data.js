@@ -17,6 +17,13 @@ describe('unit/injecting-data.js', function() {
 			firstCB = fzkes.fake('first callback')
 			lastCB = fzkes.fake('last callback')
 		})
+		describe('with no arguments', function() {
+			it('should not throw', function() {
+				expect(function() {
+					fake.callsArg()
+				}).not.to.throw()
+			})
+		})
 		describe('with `async: false` and `arg: first`', function() {
 			beforeEach(function() {
 				returnValue = fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'first' })
