@@ -232,6 +232,15 @@ describe('unit/injecting-data.js', function() {
 				constrained = fake.withComplexArgs({ regex: /ab?c/ })
 				constrained.returns(2)
 			})
+			describe('and there is another constrained', function() {
+				beforeEach(function() {
+					fake.withComplexArgs({ regex: /def/ }).returns(3)
+				})
+				it('should match the right constraint', function() {
+					expect(fake('ac')).to.equal(2)
+					expect(fake('def')).to.equal(3)
+				})
+			})
 			describe('and the regex match', function() {
 				it('should return constrained value', function() {
 					expect(fake('ac')).to.equal(2)

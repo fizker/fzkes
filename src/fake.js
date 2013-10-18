@@ -179,6 +179,11 @@ function compareObjects(a, b) {
 			if(a == null) {
 				return a === b
 			}
+
+			if(a instanceof RegExp && b instanceof RegExp) {
+				return a.toString() === b.toString()
+			}
+
 			return Object.keys(a).every(function(prop) {
 				return compareObjects(a[prop], b[prop])
 			})
