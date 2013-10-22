@@ -12,25 +12,92 @@ describe('unit/injecting-data.js', function() {
 		var firstCB
 		var lastCB
 		var returnValue
+		var actionResult
 		beforeEach(function() {
 			returnValue = null
+			actionResult = null
 			firstCB = fzkes.fake('first callback')
 			lastCB = fzkes.fake('last callback')
 		})
 		describe('with no arguments', function() {
-			it('should not throw', function() {
-				expect(function() {
-					fake.callsArg()
-				}).not.to.throw()
+			beforeEach(function() {
+				fake.callsArg()
+				fake(firstCB, lastCB)
+			})
+			it('should call the last callback immediately', function() {
+				lastCB.should.have.been.called
+			})
+		})
+		describe('with `notify` set to a function', function() {
+			var notifier
+			beforeEach(function() {
+				notifier = fzkes.fake('notifier').returns('a1')
+				fake.callsArg({ notify: notifier })
+				firstCB.returns('abc')
+				returnValue = fake(123, firstCB)
+			})
+			it('should call the function when the called arg returns', function() {
+				notifier.should.have.been.called
+			})
+			it('should pass the returned object along as the second parameter', function() {
+				notifier.should.have.been.calledWith(null, 'abc')
+			})
+			it('should return what the notifier returns', function() {
+				expect(returnValue).to.equal('a1')
+			})
+			describe('and the callback throws', function() {
+				var action
+				beforeEach(function() {
+					firstCB.throws('error')
+					action = function() { fake(123, firstCB) }
+				})
+				it('should throw the error along', function() {
+					action.should.throw('error')
+				})
+				it('should pass the thrown object as the first parameter', function() {
+					try { action() } catch(e) {}
+					notifier.should.have.been.calledWithExactly('error')
+				})
+			})
+			describe('and `notify` throws', function() {
+				var action
+				beforeEach(function() {
+					notifier.throws('error')
+					action = function() { fake(firstCB) }
+				})
+				it('should not call `notify` with the new error', function() {
+					try { action() } catch(e) {}
+					notifier.should.not.have.been.calledWith('error')
+				})
+				it('should cascade the error', function() {
+					action.should.throw('error')
+				})
+				it('should still call the callback', function() {
+					firstCB.should.have.been.called
+				})
+			})
+		})
+		describe('with `returns: val` and `notify: function`', function() {
+			var val
+			var notifier
+			beforeEach(function() {
+				notifier = fzkes.fake('notifier').returns('a1')
+				val = {}
+				fake.callsArg({ returns: val, notify: notifier })
+				returnValue = fake(firstCB)
+			})
+			it('should return `val`', function() {
+				expect(returnValue).to.equal(val)
 			})
 		})
 		describe('with `async: false` and `arg: first`', function() {
 			beforeEach(function() {
-				returnValue = fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'first' })
-				fake(123, 'abc', firstCB, lastCB)
+				actionResult = fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'first' })
+				firstCB.returns('a1')
+				returnValue = fake(123, 'abc', firstCB, lastCB)
 			})
 			it('should return the fake', function() {
-				expect(returnValue).to.equal(fake)
+				expect(actionResult).to.equal(fake)
 			})
 			it('should call the right callback', function() {
 				expect(firstCB).to.have.been.called
@@ -39,14 +106,18 @@ describe('unit/injecting-data.js', function() {
 			it('should pass the arguments along', function() {
 				firstCB.should.have.been.calledWithExactly(1, 2)
 			})
+			it('should return `undefined`', function() {
+				expect(returnValue).to.be.undefined
+			})
 		})
 		describe('with `async: false` and `arg: last`', function() {
 			beforeEach(function() {
-				returnValue = fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'last' })
-				fake(123, 'abc', firstCB, lastCB)
+				actionResult = fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'last' })
+				lastCB.returns('a1')
+				returnValue = fake(123, 'abc', firstCB, lastCB)
 			})
 			it('should return the fake', function() {
-				expect(returnValue).to.equal(fake)
+				expect(actionResult).to.equal(fake)
 			})
 			it('should call the right callback', function() {
 				expect(firstCB).to.not.have.been.called
@@ -55,43 +126,54 @@ describe('unit/injecting-data.js', function() {
 			it('should pass the arguments along', function() {
 				lastCB.should.have.been.calledWithExactly(1, 2)
 			})
+			it('should return `undefined`', function() {
+				expect(returnValue).to.be.undefined
+			})
 		})
 		describe('with `async: false` and no `arg` option', function() {
 			beforeEach(function() {
-				returnValue = fake.callsArg({ async: false })
-				fake(123, 'abc', firstCB, lastCB)
+				actionResult = fake.callsArg({ async: false })
+				lastCB.returns('a1')
+				returnValue = fake(123, 'abc', firstCB, lastCB)
 			})
 			it('should return the fake', function() {
-				expect(returnValue).to.equal(fake)
+				expect(actionResult).to.equal(fake)
 			})
 			it('should default to the last callback', function() {
 				expect(firstCB).to.not.have.been.called
 				expect(lastCB).to.have.been.called
+			})
+			it('should return `undefined`', function() {
+				expect(returnValue).to.be.undefined
 			})
 		})
 		describe('with `async: false` and `arg: 2`', function() {
 			var cb
 			beforeEach(function() {
 				cb = fzkes.fake()
-				returnValue = fake.callsArg({ async: false, arg: 2 })
-				fake(123, firstCB, cb, lastCB)
+				actionResult = fake.callsArg({ async: false, arg: 2 })
+				cb.returns('a1')
+				returnValue = fake(123, firstCB, cb, lastCB)
 			})
 			it('should return the fake', function() {
-				expect(returnValue).to.equal(fake)
+				expect(actionResult).to.equal(fake)
 			})
 			it('should call the right callback', function() {
 				expect(firstCB).to.not.have.been.called
 				expect(cb).to.have.been.called
 				expect(lastCB).to.not.have.been.called
 			})
+			it('should return `undefined`', function() {
+				expect(returnValue).to.be.undefined
+			})
 		})
 		describe('with `async: true`', function() {
 			beforeEach(function() {
-				returnValue = fake.callsArg({ async: true, arguments: [1,2] })
-				fake(firstCB)
+				actionResult = fake.callsArg({ async: true, arguments: [1,2] })
+				returnValue = fake(firstCB)
 			})
 			it('should return the fake', function() {
-				expect(returnValue).to.equal(fake)
+				expect(actionResult).to.equal(fake)
 			})
 			it('should not call it immediately', function(done) {
 				expect(firstCB).to.not.have.been.called
@@ -102,6 +184,31 @@ describe('unit/injecting-data.js', function() {
 					firstCB.should.have.been.calledWith(1,2)
 					done()
 				})
+			})
+			it('should return `undefined`', function() {
+				expect(returnValue).to.be.undefined
+			})
+		})
+		describe('with `async: true` and `returns: val`', function() {
+			var val
+			beforeEach(function() {
+				val = {}
+				fake.callsArg({ async: true, returns: val })
+				returnValue = fake(firstCB)
+			})
+			it('should return `val`', function() {
+				expect(returnValue).to.equal(val)
+			})
+		})
+		describe('with `async: false` and `returns: val`', function() {
+			var val
+			beforeEach(function() {
+				val = {}
+				fake.callsArg({ async: false, returns: val })
+				returnValue = fake(firstCB)
+			})
+			it('should return `val`', function() {
+				expect(returnValue).to.equal(val)
 			})
 		})
 		describe('with `now: true`', function() {

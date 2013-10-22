@@ -13,6 +13,8 @@ var __find = Array.prototype.find || function find(fn, ctx) {
 }
 var __map = Array.prototype.map
 
+function noop() {}
+
 function createFake(target, property) {
 	var action = null
 	var calls = []
@@ -70,7 +72,7 @@ function createFake(target, property) {
 							return args[i]
 						}
 					}
-					return function() {}
+					return noop
 				}
 				break
 			case 'last':
@@ -83,7 +85,7 @@ function createFake(target, property) {
 							return args[i]
 						}
 					}
-					return function() {}
+					return noop
 				}
 		}
 		if(options.async) {
@@ -101,7 +103,19 @@ function createFake(target, property) {
 		return this.calls(function() {
 			var args = __slice.call(arguments)
 			var callback = getCallback(args)
-			callback.apply(null, options.arguments || [])
+			var result
+			var error
+			try {
+				result = callback.apply(null, options.arguments || [])
+			} catch(e) {
+				error = e
+				if(options.notify) {
+					options.notify(e)
+					throw e
+				}
+			}
+			result = options.notify && options.notify(null, result)
+			return options.returns || result
 		}, { now: options.now })
 	}
 	fake.returns = function(val) {
