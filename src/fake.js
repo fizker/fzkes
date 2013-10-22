@@ -6,7 +6,7 @@ var __find = Array.prototype.find || function find(fn, ctx) {
 	for(var i = 0; i < l; i++) {
 		var o = this[i]
 		if(fn.call(ctx, o, i, this)) {
-			return o.fake
+			return o
 		}
 	}
 	return null
@@ -18,7 +18,10 @@ function createFake(target, property) {
 	var calls = []
 	var unhandledCalls = []
 	var constrainedFakes = []
-	constrainedFakes.find = __find
+	constrainedFakes.find = function(fn) {
+		var result = __find.call(this, fn)
+		return result && result.fake
+	}
 
 	var fake = function() {
 		var args = __slice.call(arguments)
