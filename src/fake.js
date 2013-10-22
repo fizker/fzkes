@@ -63,16 +63,23 @@ function createFake(target, property) {
 	}
 	fake.callsArg = function(options) {
 		var getCallback
+		function __matchFunction(arg) {
+			return typeof(arg) === 'function'
+		}
+		function extendGetCallback(fn) {
+			getCallback = function(internalGetCB, args) {
+				var cb = internalGetCB(args)
+				return function() {
+					var args = __slice.call(arguments)
+					return fn(cb, args)
+				}
+			}.bind(null, getCallback)
+		}
 		if(!options) options = {}
 		switch(options.arg) {
 			case 'first':
 				getCallback = function(args) {
-					for(var i = 0; i < args.length; i++) {
-						if(typeof(args[i]) == 'function') {
-							return args[i]
-						}
-					}
-					return noop
+					return __find.call(args, __matchFunction) || noop
 				}
 				break
 			case 'last':
@@ -80,41 +87,37 @@ function createFake(target, property) {
 				getCallback = typeof(options.arg) == 'number'
 				? function(args) { return args[options.arg] }
 				: function(args) {
-					for(var i = args.length - 1; i >= 0; i--) {
-						if(typeof(args[i]) == 'function') {
-							return args[i]
-						}
-					}
-					return noop
+					return __find.call(args.slice().reverse(), __matchFunction) || noop
 				}
 		}
-		if(options.async) {
-			var internalGetCB = getCallback
-			getCallback = function(args) {
-				var cb = internalGetCB(args)
-				return function() {
-					var args = __slice.call(arguments)
-					process.nextTick(function() {
-						cb.apply(null, args)
-					})
+		if(options.notify) {
+			extendGetCallback(function(cb, args) {
+				var result
+				try {
+					result = cb.apply(null, args)
+				} catch(error) {
+					options.notify(error)
+					throw error
 				}
-			}
+				result = options.notify(null, result)
+				return options.returns || result
+			})
+		} else {
+			extendGetCallback(function(cb, args) {
+				cb.apply(null, args)
+			})
+		}
+		if(options.async) {
+			extendGetCallback(function(cb, args) {
+				process.nextTick(function() {
+					cb.apply(null, args)
+				})
+			})
 		}
 		return this.calls(function() {
 			var args = __slice.call(arguments)
 			var callback = getCallback(args)
-			var result
-			var error
-			try {
-				result = callback.apply(null, options.arguments || [])
-			} catch(e) {
-				error = e
-				if(options.notify) {
-					options.notify(e)
-					throw e
-				}
-			}
-			result = options.notify && options.notify(null, result)
+			var result = callback.apply(null, options.arguments || [])
 			return options.returns || result
 		}, { now: options.now })
 	}

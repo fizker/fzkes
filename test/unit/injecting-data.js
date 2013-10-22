@@ -90,6 +90,20 @@ describe('unit/injecting-data.js', function() {
 				expect(returnValue).to.equal(val)
 			})
 		})
+		describe('with `notify: function` and `async: true`', function() {
+			var notifier
+			beforeEach(function() {
+				notifier = fzkes.fake('notifier')
+				fake.callsArg({ async: true, notify: notifier })
+				fake(firstCB)
+			})
+			it('should not call `notify` until the callback have been called', function() {
+				notifier.should.not.have.been.called
+			})
+			it('should still call `notify`', function(done) {
+				notifier.calls(done)
+			})
+		})
 		describe('with `async: false` and `arg: first`', function() {
 			beforeEach(function() {
 				actionResult = fake.callsArg({ async: false, arguments: [ 1, 2 ], arg: 'first' })

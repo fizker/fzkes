@@ -95,6 +95,8 @@ It can take the following options:
   `function(error, returnValue)`, where `error` is whatever the callback threw,
   and `returnValue` is what the callback returned. If `async` is false, the fake
   will return whatever the `notify` function returns.
+
+  This option is also perfect for [mocha][mocha] style async handlers.
 - returns: A value to return whenever the fake is called. This takes presedence
   over the return-value of `notify`, but exceptions still triumph.
 - now: A flag that determines if the action should occur for future calls or for
@@ -122,6 +124,7 @@ Examples follow:
 	// Default is no parameters to the callback, but these can be controlled
 	fake.callsArg({ arguments: [ 1, 2 ] })
 
+[mocha]: http://visionmedia.github.io/mocha/
 
 ### Emulating calls after they have been called
 
