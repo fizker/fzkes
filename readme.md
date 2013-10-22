@@ -91,21 +91,22 @@ throws an exception, the fake with throw it as well.
 
 It can take the following options:
 
-- notify: A function to notify whenever the fake is called. It is called as
+- `notify`: A function to notify whenever the fake is called. It is called as
   `function(error, returnValue)`, where `error` is whatever the callback threw,
   and `returnValue` is what the callback returned. If `async` is false, the fake
   will return whatever the `notify` function returns.
 
   This option is also perfect for [mocha][mocha] style async handlers.
-- returns: A value to return whenever the fake is called. This takes presedence
+- `returns`: A value to return whenever the fake is called. This takes presedence
   over the return-value of `notify`, but exceptions still triumph.
-- now: A flag that determines if the action should occur for future calls or for
-  the first unhandled call. This will throw if the fake have no unhandled calls.
-- async: A flag determining if the callback should be called immediately or in
+- `now`: A flag that determines if the action should occur for future calls or
+  for the first unhandled call. This will throw if the fake have no unhandled
+  calls.
+- `async`: A flag determining if the callback should be called immediately or in
   the next tick (which would simulate an async call).
-- arg: The argument to call. This can be the parameter index (0-n), `'first'` or
-  `'last'`. It defaults to `'last'`.
-- arguments: An array of the arguments to pass to the callback.
+- `arg`: The argument to call. This can be the parameter index (0-n), `'first'`
+  or `'last'`. It defaults to `'last'`.
+- `arguments`: An array of the arguments to pass to the callback.
 
 
 Examples follow:
