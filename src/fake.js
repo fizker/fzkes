@@ -190,6 +190,10 @@ function createFake(target, property) {
 			}
 
 			target[property] = fake
+		} else if(typeof(target) == 'function') {
+			original = target
+			fake._name = target.name
+			fake.callsOriginal()
 		} else {
 			fake._name = target
 		}

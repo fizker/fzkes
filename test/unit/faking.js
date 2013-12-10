@@ -1,4 +1,22 @@
 describe('unit/faking.js', function() {
+	describe('When `fake()` is called with a function', function() {
+		var fn
+		var fake
+
+		beforeEach(function() {
+			fn = fzkes.fake('original')
+			fake = fzkes.fake(fn)
+		})
+		describe('and the fake is called', function() {
+			beforeEach(function() {
+				fake()
+			})
+			it('should automatically call the original', function() {
+				fn.should.have.been.called
+			})
+		})
+	})
+
 	describe('When `fake(obj, name)` is called', function() {
 		var fake
 		var obj
