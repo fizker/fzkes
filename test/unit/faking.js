@@ -3,6 +3,7 @@ describe('unit/faking.js', function() {
 		var fake
 		var obj
 		var fn
+
 		beforeEach(function() {
 			fn = fzkes.fake()
 			obj = { a: fn }
@@ -16,6 +17,22 @@ describe('unit/faking.js', function() {
 			obj.a()
 			fn.should.not.have.been.called
 		})
+
+		describe('where `name` points to a non-function', function() {
+			beforeEach(function() {
+				obj.a = 123
+				fn = function() {
+					fzkes.fake(obj, 'a')
+				}
+			})
+			it('should throw an exception', function() {
+				fn.should.throw()
+			})
+			it('should not replace the property', function() {
+				obj.a.should.equal(123)
+			})
+		})
+
 		describe('and it is told to `callsOriginal()`', function() {
 			var returnValue
 			beforeEach(function() {
@@ -30,6 +47,7 @@ describe('unit/faking.js', function() {
 					.to.equal(fake)
 			})
 		})
+
 		describe('and calling `callsOriginal({ now: true })`', function() {
 			describe('before a call is registered', function() {
 				it('should throw an exception', function() {
@@ -38,6 +56,7 @@ describe('unit/faking.js', function() {
 					}).to.throw()
 				})
 			})
+
 			describe('after a call is registered', function() {
 				beforeEach(function() {
 					fake(1, 'a')
@@ -48,6 +67,7 @@ describe('unit/faking.js', function() {
 				})
 			})
 		})
+
 		describe('and `restore` is called on the fake', function() {
 			beforeEach(function() {
 				fake.restore()
@@ -57,6 +77,7 @@ describe('unit/faking.js', function() {
 				expect(obj.a).not.to.equal(fake)
 			})
 		})
+
 		describe('and `restore()` is called on `fzkes`', function() {
 			beforeEach(function() {
 				fzkes.restore()
