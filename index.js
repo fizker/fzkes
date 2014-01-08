@@ -1,6 +1,7 @@
 module.exports = require('./src/chai')
 
 module.exports.fake = createFake
+module.exports.fakeAll = fakeAll
 module.exports.scope = createScope
 module.exports.restore = restoreAll
 module.exports.chai = function() {
@@ -31,4 +32,23 @@ function createFake(target, property) {
 	var fake = getFake(target, property)
 	fakes.push(fake)
 	return fake
+}
+
+function fakeAll(obj, opts) {
+	if(!opts) opts = {}
+	Object.keys(obj).forEach(function(key) {
+		if(typeof(obj[key]) == 'function') {
+			var fake = this.fake(obj, key)
+			switch(opts.action) {
+				case 'none':
+					break
+				case 'throws':
+					fake.throws(new Error('Fake not overridden'))
+					break
+				default:
+					fake.callsOriginal()
+					break
+			}
+		}
+	}, this)
 }

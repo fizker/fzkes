@@ -1,4 +1,99 @@
 describe('unit/faking.js', function() {
+	describe('When `fzkes.fakeAll(obj)` is called', function() {
+		var obj
+		var originalObj
+		beforeEach(function() {
+			var a = fzkes.fake('original-a').returns(1)
+			var c = fzkes.fake('original-c').returns(3)
+			var e = fzkes.fake('original-e').returns(5)
+			originalObj =
+				{ a: a
+				, b: 1
+				, c: c
+				, d: 2
+				, e: e
+				}
+			obj =
+				{ a: a
+				, b: 1
+				, c: c
+				, d: 2
+				, e: e
+				}
+		})
+
+		describe('without any options', function() {
+			beforeEach(function() {
+				fzkes.fakeAll(obj)
+			})
+			it('should fake all functions on `obj`', function() {
+				obj.should.have.property('a').not.equal(originalObj.a)
+				obj.should.have.property('b').equal(1)
+				obj.should.have.property('c').not.equal(originalObj.b)
+				obj.should.have.property('d').equal(2)
+				obj.should.have.property('e').not.equal(originalObj.c)
+			})
+			it('should call the original per default', function() {
+				obj.a()
+				originalObj.a.should.have.been.called
+			})
+		})
+
+		describe('and a default action is supplied as an option', function() {
+			describe('and the default is `none`', function() {
+				beforeEach(function() {
+					fzkes.fakeAll(obj, { action: 'none' })
+				})
+				it('should fake all functions on `obj`', function() {
+					obj.should.have.property('a').not.equal(originalObj.a)
+					obj.should.have.property('b').equal(1)
+					obj.should.have.property('c').not.equal(originalObj.b)
+					obj.should.have.property('d').equal(2)
+					obj.should.have.property('e').not.equal(originalObj.c)
+				})
+				it('should do nothing', function() {
+					obj.c()
+					originalObj.c.should.not.have.been.called
+				})
+			})
+
+			describe('and the default action is `callsOriginal`', function() {
+				beforeEach(function() {
+					fzkes.fakeAll(obj, { action: 'callsOriginal' })
+				})
+				it('should fake all functions on `obj`', function() {
+					obj.should.have.property('a').not.equal(originalObj.a)
+					obj.should.have.property('b').equal(1)
+					obj.should.have.property('c').not.equal(originalObj.b)
+					obj.should.have.property('d').equal(2)
+					obj.should.have.property('e').not.equal(originalObj.c)
+				})
+				it('should call the original', function() {
+					obj.e()
+					originalObj.e.should.have.been.called
+				})
+			})
+
+			describe('and the default action is `throws`', function() {
+				beforeEach(function() {
+					fzkes.fakeAll(obj, { action: 'throws' })
+				})
+				it('should fake all functions on `obj`', function() {
+					obj.should.have.property('a').not.equal(originalObj.a)
+					obj.should.have.property('b').equal(1)
+					obj.should.have.property('c').not.equal(originalObj.b)
+					obj.should.have.property('d').equal(2)
+					obj.should.have.property('e').not.equal(originalObj.c)
+				})
+				it('should throw a `Fake not overridden` error', function() {
+					expect(function() {
+						obj.a()
+					}).to.throw('Fake not overridden')
+				})
+			})
+		})
+	})
+
 	describe('When `fake()` is called with a function', function() {
 		var fn
 		var fake

@@ -14,9 +14,29 @@ How to use
 ### Creating fakes
 
 	var fzkes = require('fzkes')
+
+	// Creating a stand-alone fake, great for use as a callback
 	var fake = fzkes.fake()
+
+	// For overriding an original function, great for restoring later
 	var fs = require('fs')
 	fzkes.fake(fs, 'readFile')
+
+	// For faking all functions on an object
+	fzkes.fakeAll(fs)
+
+
+#### fakeAll
+
+The `fzkes.fakeAll()` function can take an options-dictionary, allowing for
+overriding the default action. The options are:
+
+- `callsOriginal`: The default. `fake.callsOriginal()` is evoked on all fakes.
+- `none`: No action is taken on the fakes.
+- `throws`: A `'Fake not overridden'` exception will be evoked on all fakes.
+
+All fakes can of course be overridden later on, the default is just what should
+happen out-of-the-box.
 
 
 ### Restoring original functions
