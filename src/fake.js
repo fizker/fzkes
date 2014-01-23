@@ -177,6 +177,9 @@ function createFake(target, property) {
 	fake.callsOriginal = function(options) {
 		return this.calls(original, options)
 	}
+	fake.reset = function() {
+		calls = []
+	}
 
 	var original
 	fake._name = 'fake'

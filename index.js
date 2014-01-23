@@ -4,6 +4,7 @@ module.exports.fake = createFake
 module.exports.fakeAll = fakeAll
 module.exports.scope = createScope
 module.exports.restore = restoreAll
+module.exports.reset = resetAll
 module.exports.chai = function() {
 	console.warn('`chai.use(fzkes.chai)` is deprecated, please use `chai.use(fzkes)` going forward.')
 	module.exports.apply(null, arguments)
@@ -20,6 +21,12 @@ function restoreAll() {
 		fake.restore()
 	})
 	fakes = []
+}
+
+function resetAll() {
+	fakes.forEach(function(fake) {
+		fake.reset()
+	})
 }
 
 function createScope() {
