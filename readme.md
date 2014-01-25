@@ -39,6 +39,14 @@ All fakes can of course be overridden later on, the default is just what should
 happen out-of-the-box.
 
 
+### Resetting fakes
+
+Resetting a fake (`fake.reset()`) will set its internal state to what it was
+when it was new.
+
+It is possible to reset all fakes by calling `fzkes.reset()` or `scope.reset()`.
+
+
 ### Restoring original functions
 
 There are three ways to easily doing this, depending on the scope:
