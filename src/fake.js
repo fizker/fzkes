@@ -179,6 +179,7 @@ function createFake(target, property) {
 	}
 	fake.reset = function() {
 		calls = []
+		unhandledCalls = []
 		action = null
 		while(constrainedFakes.length) constrainedFakes.pop()
 	}

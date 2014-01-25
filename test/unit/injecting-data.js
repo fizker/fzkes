@@ -530,12 +530,17 @@ describe('unit/injecting-data.js', function() {
 		var action
 		beforeEach(function() {
 			action = fzkes.fake('action')
+			fake('before reset')
 			fake.calls(action)
 			fake.reset()
-			fake()
+			fake('after reset')
 		})
 		it('should reset the action', function() {
 			expect(action).not.to.have.been.called
+		})
+		it('should also reset the action for `{ now: true }` calls', function() {
+			fake.calls(action, { now: true })
+			action.should.have.been.calledWith('after reset')
 		})
 
 		describe('and `withArgs()` was called', function() {
