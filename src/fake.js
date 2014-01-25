@@ -179,6 +179,8 @@ function createFake(target, property) {
 	}
 	fake.reset = function() {
 		calls = []
+		action = null
+		while(constrainedFakes.length) constrainedFakes.pop()
 	}
 
 	var original
