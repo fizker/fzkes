@@ -525,4 +525,33 @@ describe('unit/injecting-data.js', function() {
 			})
 		})
 	})
+
+	describe('When calling `fake.reset()`', function() {
+		var action
+		beforeEach(function() {
+			action = fzkes.fake('action')
+			fake('before reset')
+			fake.calls(action)
+			fake.reset()
+			fake('after reset')
+		})
+		it('should reset the action', function() {
+			expect(action).not.to.have.been.called
+		})
+		it('should also reset the action for `{ now: true }` calls', function() {
+			fake.calls(action, { now: true })
+			action.should.have.been.calledWith('after reset')
+		})
+
+		describe('and `withArgs()` was called', function() {
+			beforeEach(function() {
+				fake.withArgs(1).calls(action)
+				fake.reset()
+				fake(1)
+			})
+			it('should reset the sub-queries as well', function() {
+				expect(action).not.to.have.been.called
+			})
+		})
+	})
 })

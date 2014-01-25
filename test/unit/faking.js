@@ -200,5 +200,27 @@ describe('unit/faking.js', function() {
 				expect(obj.a).not.to.equal(fake)
 			})
 		})
+
+		describe('and `reset()` is called on the fake', function() {
+			beforeEach(function() {
+				obj.a(1, 'a')
+				fake.reset()
+			})
+			it('should keep the original faked', function() {
+				expect(obj.a).not.to.equal(fn)
+				expect(obj.a).to.equal(fake)
+			})
+		})
+
+		describe('and `reset()` is called on `fzkes`', function() {
+			beforeEach(function() {
+				obj.a(1, 'a')
+				fzkes.reset()
+			})
+			it('should not restore any fakes', function() {
+				expect(obj.a).not.to.equal(fn)
+				expect(obj.a).to.equal(fake)
+			})
+		})
 	})
 })

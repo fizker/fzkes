@@ -30,6 +30,19 @@ describe('unit/scopes.js', function() {
 			})
 		})
 	})
+
+	describe('When resetting a scope', function() {
+		var fake
+		beforeEach(function() {
+			fake = scope.fake()
+			fake()
+			scope.reset()
+		})
+		it('should reset the fake', function() {
+			expect(fake).not.to.have.been.called
+		})
+	})
+
 	describe('When restoring a scope', function() {
 		var obj
 		var a

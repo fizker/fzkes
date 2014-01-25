@@ -177,6 +177,12 @@ function createFake(target, property) {
 	fake.callsOriginal = function(options) {
 		return this.calls(original, options)
 	}
+	fake.reset = function() {
+		calls = []
+		unhandledCalls = []
+		action = null
+		while(constrainedFakes.length) constrainedFakes.pop()
+	}
 
 	var original
 	fake._name = 'fake'

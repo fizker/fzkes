@@ -36,6 +36,29 @@ describe('unit/validation.js', function() {
 		it('should return true for `wasCalledWithExactly(123, "abc")`', function() {
 			expect(fake.wasCalledWithExactly(123, 'abc')).to.be.true
 		})
+
+		describe('and `fake.reset()` is called', function() {
+			beforeEach(function() {
+				fake.reset()
+			})
+			it('should reset all calls on the fake', function() {
+				expect(fake).not.to.have.been.called
+				expect(fake.callCount).to.equal(0)
+			})
+		})
+
+		describe('and `fzkes.reset()` is called', function() {
+			var wasCalled
+			beforeEach(function() {
+				wasCalled = false
+				fake.reset = function() { wasCalled = true }
+				fzkes.reset()
+			})
+			it('should call `fake.reset()` behind the scenes', function() {
+				expect(wasCalled).to.be.true
+			})
+		})
+
 		describe('with an object', function() {
 			beforeEach(function() {
 				fake({ a: 1, b: [ 2, { c: 3 } ] })
