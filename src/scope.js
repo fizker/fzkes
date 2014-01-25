@@ -8,11 +8,18 @@ function createScope() {
 	return { fake: sub(require('./fake'))
 	       , scope: sub(createScope)
 	       , restore: restoreSub
+	       , reset: resetSub
 	       }
 
 	function restoreSub() {
 		subs.forEach(function(sub) {
 			sub.restore()
+		})
+	}
+
+	function resetSub() {
+		subs.forEach(function(sub) {
+			sub.reset()
 		})
 	}
 
