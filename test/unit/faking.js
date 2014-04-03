@@ -146,6 +146,41 @@ describe('unit/faking.js', function() {
 			})
 		})
 
+		describe('where `name` points to a non-existing value', function() {
+			beforeEach(function() {
+				obj = {}
+				fake = fzkes.fake(obj, 'a')
+			})
+			it('should replace `name` on `obj`', function() {
+				expect(obj.a).to.equal(fake)
+			})
+		})
+
+		describe('where `name` is set to undefined', function() {
+			beforeEach(function() {
+				obj.a = undefined
+				fake = fzkes.fake(obj, 'a')
+			})
+			it('should replace `name` on `obj`', function() {
+				expect(obj.a).to.equal(fake)
+			})
+		})
+
+		describe('where `name` is set to null', function() {
+			beforeEach(function() {
+				obj.a = null
+				fn = function() {
+					fzkes.fake(obj, 'a')
+				}
+			})
+			it('should throw an exception', function() {
+				fn.should.throw()
+			})
+			it('should not replace the property', function() {
+				expect(obj.a).to.be.null
+			})
+		})
+
 		describe('and it is told to `callsOriginal()`', function() {
 			var returnValue
 			beforeEach(function() {

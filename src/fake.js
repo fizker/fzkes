@@ -190,7 +190,7 @@ function createFake(target, property) {
 		if(property) {
 			fake._name = property
 			original = target[property]
-			if(typeof(original) != 'function') {
+			if(original !== undefined && typeof(original) != 'function') {
 				throw new Error('Property `' + property + '` on `'
 					+ JSON.stringify(target)  + '` is not a function.')
 			}
