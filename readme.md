@@ -54,10 +54,10 @@ There are three ways to easily doing this, depending on the scope:
 1. Restoring a single fake: `fake.restore()`
 2. Restoring all fakes across the board: `fzkes.restore()`
 
-The last is a bit more tricky; A sub-scope can be creating by calling `fzkes.scope()`.
-The scope have all methods (except `chai`) that the original `fzkes` object have,
-except the `restore()` function on a scope only affects fakes created within
-that scope.
+The last is a bit more tricky; A sub-scope can be creating by calling
+`fzkes.scope()`. The scope have all methods (except `chai`) that the original
+`fzkes` object have, except the `restore()` function on a scope only affects
+fakes created within that scope.
 
 
 ### Injecting data
@@ -97,8 +97,8 @@ It can also chain the withArgs() automatically:
 #### Advanced `withArgs`
 
 There is a more advanced form of `withArgs` called `withComplexArgs`.
-It allows for skipping arguments entirely, as well as defining regular expressions
-to validate against strings.
+It allows for skipping arguments entirely, as well as defining regular
+expressions to validate against strings.
 
 	var fake = fzkes.fake('name')
 		.returns(1)
@@ -120,20 +120,25 @@ throws an exception, the fake with throw it as well.
 It can take the following options:
 
 - `notify`: A function to notify whenever the fake is called. It is called as
-  `function(error, returnValue)`, where `error` is whatever the callback threw,
-  and `returnValue` is what the callback returned. If `async` is false, the fake
-  will return whatever the `notify` function returns.
+	`function(error, returnValue)`, where `error` is whatever the callback
+	threw, and `returnValue` is what the callback returned. If `async` is
+	false, the fake will return whatever the `notify` function returns.
 
-  This option is also perfect for [mocha][mocha] style async handlers.
-- `returns`: A value to return whenever the fake is called. This takes presedence
-  over the return-value of `notify`, but exceptions still triumph.
+	This option is also perfect for [mocha][mocha] style async handlers.
+
+- `returns`: A value to return whenever the fake is called. This takes
+	presedence over the return-value of `notify`, but exceptions still triumph.
+
 - `now`: A flag that determines if the action should occur for future calls or
-  for the first unhandled call. This will throw if the fake have no unhandled
-  calls.
+	for the first unhandled call. This will throw if the fake have no unhandled
+	calls.
+
 - `async`: A flag determining if the callback should be called immediately or in
-  the next tick (which would simulate an async call).
+	the next tick (which would simulate an async call).
+
 - `arg`: The argument to call. This can be the parameter index (0-n), `'first'`
-  or `'last'`. It defaults to `'last'`.
+	or `'last'`. It defaults to `'last'`.
+
 - `arguments`: An array of the arguments to pass to the callback.
 
 
@@ -228,10 +233,12 @@ It adds both an AMD wrapper for use with `require` or a similar tool, and a
 global version if neither `node` nor `AMD` is detected.
 
 The browser-version is located in the root folder, and is called `browser.js`.
-It can either be included by `<script src="node_modules/fzkes/browser.js"></script>`,
-or copied to a lib-folder of your choosing.
+It can either be included by
+`<script src="node_modules/fzkes/browser.js"></script>`, or copied to a
+lib-folder of your choosing.
 
 Then simply follow the guide above for setting it up and interacting with it.
 
-__NOTE:__ The 0.10 version of `browser.js` is incompatible with earlier versions,
-because of how it is now wrapped. This should be for the better though.
+__NOTE:__ The 0.10 version of `browser.js` is incompatible with earlier
+versions, because of how it is now wrapped. This should be for the better
+though.
