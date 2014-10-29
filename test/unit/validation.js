@@ -3,6 +3,7 @@ describe('unit/validation.js', function() {
 	beforeEach(function() {
 		fake = fzkes.fake()
 	})
+
 	describe('When a fake have not been called', function() {
 		it('should have a call count of 0', function() {
 			expect(fake).to.have.property('callCount', 0)
@@ -11,6 +12,7 @@ describe('unit/validation.js', function() {
 			expect(fake.wasCalled()).to.equal(false)
 		})
 	})
+
 	describe('When a fake have been called', function() {
 		beforeEach(function() {
 			fake(123, 'abc')
@@ -65,6 +67,20 @@ describe('unit/validation.js', function() {
 			})
 			it('should match `wasCalledWith` deeply', function() {
 				expect(fake.wasCalledWith({ a: 1, b: [ 2, { c: 3 } ] })).to.be.true
+			})
+		})
+
+		describe('with no parameters at first', function() {
+			beforeEach(function() {
+				fake()
+			})
+			describe('and then evaluated against an object', function() {
+				beforeEach(function() {
+					fake({ a: 1 })
+				})
+				it('should correctly match against all calls', function() {
+					expect(fake.wasCalledWith({ a: 1 })).to.be.true
+				})
 			})
 		})
 	})

@@ -215,6 +215,8 @@ function compareObjects(a, b) {
 				return a === b
 			}
 
+			if(b == null) return false
+
 			if(a instanceof RegExp && b instanceof RegExp) {
 				return a.toString() === b.toString()
 			}
