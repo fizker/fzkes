@@ -1,34 +1,35 @@
-{ "name": "fzkes"
-, "version": "0.14.0"
-, "description": "A faking library"
-, "main": "index.js"
-, "scripts":
-  { "test": "mocha && karma start --browsers Chrome,Firefox --single-run"
-  , "install": "node install.js"
-  }
-, "dependencies":
-  { "browserify": "~2.28.0"
-  }
-, "devDependencies":
-  { "chai": "~1.7"
-  , "mocha": "~1.12"
-  , "glob": "~3.2.6"
-  , "karma": "~0.8.8"
-  }
-, "repository":
-  { "type": "git"
-  , "url": "git://github.com/fizker/js-fzkes.git"
-  }
-, "keywords":
-  [ "javascript"
-  , "js"
-  , "fake"
-  , "faking"
-  , "mocha"
-  , "chai"
-  , "test"
-  ]
-, "author": "Benjamin Horsleben"
-, "license": "WTFPL"
-, "readmeFilename": "readme.md"
+{
+  "name": "fzkes",
+  "version": "0.14.1",
+  "description": "A faking library",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha && karma start --browsers Chrome,Firefox --single-run",
+    "install": "node install.js"
+  },
+  "dependencies": {
+    "browserify": "~2.28.0"
+  },
+  "devDependencies": {
+    "chai": "~1.7",
+    "mocha": "~1.12",
+    "glob": "~3.2.6",
+    "karma": "~0.8.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/fizker/js-fzkes.git"
+  },
+  "keywords": [
+    "javascript",
+    "js",
+    "fake",
+    "faking",
+    "mocha",
+    "chai",
+    "test"
+  ],
+  "author": "Benjamin Horsleben",
+  "license": "WTFPL",
+  "readmeFilename": "readme.md"
 }
