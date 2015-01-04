@@ -4,17 +4,13 @@
   "description": "A faking library",
   "main": "index.js",
   "scripts": {
-    "test": "mocha && karma start --browsers Chrome,Firefox --single-run",
-    "install": "node install.js"
+    "test": "mocha"
   },
   "dependencies": {
-    "browserify": "~2.28.0"
   },
   "devDependencies": {
     "chai": "~1.7",
-    "mocha": "~1.12",
-    "glob": "~3.2.6",
-    "karma": "~0.8.8"
+    "mocha": "~1.12"
   },
   "repository": {
     "type": "git",
