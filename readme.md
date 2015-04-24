@@ -4,7 +4,7 @@ fzkes
 A faking library
 
 I must immediately apologize for the name; it is a horrible pun combining `fzk`
-(a shortening of the name of my compay) and `fakes`. But it does ring clear,
+(a shortening of the name of my company) and `fakes`. But it does have a nice ring to it,
 and I want it to be short and unique. So there it is.
 
 
