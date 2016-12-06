@@ -6,11 +6,10 @@
   "scripts": {
     "test": "mocha"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "chai": "~1.7",
-    "mocha": "~1.12"
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
   },
   "repository": {
     "type": "git",
