@@ -17,7 +17,7 @@ var getScope = require('./src/scope')
 
 var fakes = []
 function restoreAll() {
-	fakes.forEach(function(fake) {
+	fakes.reverse().forEach(function(fake) {
 		fake.restore()
 	})
 	fakes = []
