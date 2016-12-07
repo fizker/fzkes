@@ -1,4 +1,9 @@
 describe('unit/faking.js', function() {
+	let testData
+	beforeEach(() => {
+		testData = {}
+	})
+
 	describe('When `fzkes.fakeAll(obj)` is called', function() {
 		var obj
 		var originalObj
@@ -118,7 +123,7 @@ describe('unit/faking.js', function() {
 		var fn
 
 		beforeEach(function() {
-			fn = fzkes.fake()
+			fn = fzkes.fake('original function')
 			obj = { a: fn }
 			fake = fzkes.fake(obj, 'a')
 		})
@@ -129,6 +134,81 @@ describe('unit/faking.js', function() {
 		it('should no longer call the original', function() {
 			obj.a()
 			fn.should.not.have.been.called
+		})
+
+		describe('where `name` points to a fake that previously replaced the property', () => {
+			beforeEach(() => {
+				/*
+				testData.originalFunction = fzkes.fake('original')
+				testData.object = { a: (...args) => testData.originalFunction(...args) }
+				testData.firstFake = fzkes.fake(testData.object, 'a').returns(1)
+				*/
+				obj.a.returns(1)
+				testData.secondFake = fzkes.fake(obj, 'a')
+			})
+			it('should replace `name` on `obj`', function() {
+				expect(obj.a).not.to.equal(fn)
+				expect(obj.a).to.not.equal(fake)
+				expect(obj.a).to.equal(testData.secondFake)
+			})
+			it('should no longer do the original action', function() {
+				expect(obj.a()).to.not.equal(1)
+				fake.should.not.have.been.called
+			})
+
+			describe('then restoring all fakes', () => {
+				beforeEach(() => {
+					fzkes.restore()
+				})
+				it('should now have the original function', () => {
+					expect(obj.a).to.equal(fn)
+				})
+
+				describe('then restoring the middle fake', () => {
+					beforeEach(() => {
+						fake.restore()
+					})
+					it('should still be at the original function', () => {
+						expect(obj.a).to.equal(fn)
+					})
+				})
+
+				describe('then restoring the newest fake', () => {
+					beforeEach(() => {
+						testData.secondFake.restore()
+					})
+					it('should still be at the original function', () => {
+						expect(obj.a).to.equal(fn)
+					})
+				})
+			})
+
+			describe('then restoring the newest fake', () => {
+				beforeEach(() => {
+					testData.secondFake.restore()
+				})
+				it('should be back to the middle fake', () => {
+					expect(obj.a).to.equal(fake)
+				})
+			})
+
+			describe('then restoring the middle fake', () => {
+				beforeEach(() => {
+					fake.restore()
+				})
+				it('should be back to the original function', () => {
+					expect(obj.a).to.equal(fn)
+				})
+
+				describe('then restoring the newest fake', () => {
+					beforeEach(() => {
+						testData.secondFake.restore()
+					})
+					it('should still be at the original function', () => {
+						expect(obj.a).to.equal(fn)
+					})
+				})
+			})
 		})
 
 		describe('where `name` points to a non-function', function() {
