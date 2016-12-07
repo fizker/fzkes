@@ -169,13 +169,16 @@ function createFake(target, property) {
 		}
 		return newFake
 	}
+	fake.callsOriginal = function(options) {
+		return this.calls(original, options)
+	}
+
 	fake.restore = function() {
 		if(target && property) {
 			target[property] = original
+			target = null
+			property = null
 		}
-	}
-	fake.callsOriginal = function(options) {
-		return this.calls(original, options)
 	}
 	fake.reset = function() {
 		calls = []
