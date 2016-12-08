@@ -199,6 +199,14 @@ function createFake(target, property) {
 			}
 
 			target[property] = fake
+			if(original && typeof(original.restore) == 'function' && typeof(original.calls) == 'function' && original._willRestore) {
+				var originalRestore = original.restore
+				original.restore = function() {
+					target = null
+					property = null
+					return originalRestore.apply(this, arguments)
+				}
+			}
 		} else if(typeof(target) == 'function') {
 			original = target
 			fake._name = target.name
@@ -207,6 +215,8 @@ function createFake(target, property) {
 			fake._name = target
 		}
 	}
+
+	fake._willRestore = !!(target && property)
 
 	return fake
 }
