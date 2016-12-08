@@ -169,13 +169,16 @@ function createFake(target, property) {
 		}
 		return newFake
 	}
+	fake.callsOriginal = function(options) {
+		return this.calls(original, options)
+	}
+
 	fake.restore = function() {
 		if(target && property) {
 			target[property] = original
+			target = null
+			property = null
 		}
-	}
-	fake.callsOriginal = function(options) {
-		return this.calls(original, options)
 	}
 	fake.reset = function() {
 		calls = []
@@ -196,6 +199,14 @@ function createFake(target, property) {
 			}
 
 			target[property] = fake
+			if(original && typeof(original.restore) == 'function' && typeof(original.calls) == 'function' && original._willRestore) {
+				var originalRestore = original.restore
+				original.restore = function() {
+					target = null
+					property = null
+					return originalRestore.apply(this, arguments)
+				}
+			}
 		} else if(typeof(target) == 'function') {
 			original = target
 			fake._name = target.name
@@ -204,6 +215,8 @@ function createFake(target, property) {
 			fake._name = target
 		}
 	}
+
+	fake._willRestore = !!(target && property)
 
 	return fake
 }

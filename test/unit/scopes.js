@@ -47,7 +47,7 @@ describe('unit/scopes.js', function() {
 		var obj
 		var a
 		beforeEach(function() {
-			a = fzkes.fake()
+			a = fzkes.fake('original')
 			obj = { a: a }
 			scope.fake(obj, 'a')
 			scope.restore()
@@ -59,7 +59,7 @@ describe('unit/scopes.js', function() {
 			var obj
 			var a
 			beforeEach(function() {
-				a = fzkes.fake()
+				a = fzkes.fake('original')
 				obj = { a: a }
 				scope.scope().fake(obj, 'a')
 				scope.restore()
@@ -73,7 +73,7 @@ describe('unit/scopes.js', function() {
 		var obj
 		var a
 		beforeEach(function() {
-			a = fzkes.fake()
+			a = fzkes.fake('original')
 			obj = { a: a }
 			scope.fake(obj, 'a')
 			fzkes.restore()
