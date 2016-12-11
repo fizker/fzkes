@@ -3,6 +3,10 @@ module.exports = require('./src/chai')
 module.exports.fake = createFake
 module.exports.fakeAll = fakeAll
 module.exports.scope = createScope
+module.exports.clear = function() {
+	restoreAll()
+	fakes = []
+}
 module.exports.restore = restoreAll
 module.exports.reset = resetAll
 module.exports.chai = function() {
