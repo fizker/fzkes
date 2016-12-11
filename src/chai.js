@@ -1,6 +1,14 @@
+var isFake = require('./is-fake')
+
 module.exports = attachToChai
 
 var __slice = Array.prototype.slice
+
+function assertIsFake(fake) {
+	if(!isFake(fake)) {
+		throw new Error(`\`${fake}\` is not a fake`)
+	}
+}
 
 function attachToChai(chai, utils) {
 	chai.Assertion.addChainableMethod('called', function(expectedCallCount) {
@@ -15,6 +23,8 @@ function attachToChai(chai, utils) {
 		)
 	}, function() {
 		var fake = utils.flag(this, 'object')
+		assertIsFake(fake)
+
 		this.assert(
 		  fake.wasCalled()
 		, 'expected `' + fake._name + '` to have been called'
@@ -25,6 +35,8 @@ function attachToChai(chai, utils) {
 		var params = __slice.call(arguments)
 		var paramsAsString = formatCall(params)
 		var fake = utils.flag(this, 'object')
+		assertIsFake(fake)
+
 		var callsAsString = formatCalls(fake._calls)
 		this.assert(
 		  fake.wasCalledWith.apply(fake, params)
@@ -36,6 +48,8 @@ function attachToChai(chai, utils) {
 		var params = __slice.call(arguments)
 		var paramsAsString = formatCall(params)
 		var fake = utils.flag(this, 'object')
+		assertIsFake(fake)
+
 		var callsAsString = formatCalls(fake._calls)
 		this.assert(
 		  fake.wasCalledWithExactly.apply(fake, params)

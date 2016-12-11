@@ -1,3 +1,11 @@
+var isFake = require('./is-fake')
+function isResettable(fake) {
+	if(!isFake(fake)) return false
+
+	return typeof(fake.restore) === 'function'
+		&& typeof(fake.reset) === 'function'
+}
+
 module.exports = createFake
 
 var __slice = Array.prototype.slice
@@ -199,7 +207,7 @@ function createFake(target, property) {
 			}
 
 			target[property] = fake
-			if(original && typeof(original.restore) == 'function' && typeof(original.calls) == 'function' && original._willRestore) {
+			if(original && isResettable(original) && original._willRestore) {
 				var originalRestore = original.restore
 				original.restore = function() {
 					target = null

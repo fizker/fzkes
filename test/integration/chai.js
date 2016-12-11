@@ -1,8 +1,36 @@
 describe('integration/chai.js', function() {
+	var testData
 	var fake
 	beforeEach(function() {
+		testData = {}
 		fake = fzkes.fake()
 		chai.use(fzkes)
+	})
+	describe('Asserting on a non-fake', () => {
+		beforeEach(() => {
+			testData.nonFake = function() {}
+		})
+		describe('with `called`', () => {
+			it('should give a proper message', () => {
+				expect(() => {
+					expect(testData.nonFake).to.have.been.called(1)
+				}).to.throw(/not a fake/)
+			})
+		})
+		describe('with `calledWith`', () => {
+			it('should give a proper message', () => {
+				expect(() => {
+					expect(testData.nonFake).to.have.been.calledWith(1)
+				}).to.throw(/not a fake/)
+			})
+		})
+		describe('with `calledWithExactly`', () => {
+			it('should give a proper message', () => {
+				expect(() => {
+					expect(testData.nonFake).to.have.been.calledWithExactly(1)
+				}).to.throw(/not a fake/)
+			})
+		})
 	})
 	describe('When asserting for `called`', function() {
 		it('should pass if the fake have been called', function() {
