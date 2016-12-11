@@ -11,9 +11,13 @@ describe('unit/validation.js', function() {
 		it('should return false for `wasCalled()`', function() {
 			expect(fake.wasCalled()).to.equal(false)
 		})
+		it('should return false for `wasCalledWith({})`', () => {
+			expect(fake.wasCalledWith({})).to.equal(false)
+			expect(fake).to.not.have.been.calledWith({ a: { b: {} } })
+		})
 	})
 
-	describe('When a fake have been called', function() {
+	describe('When a fake have been called with (123, "abc")', function() {
 		beforeEach(function() {
 			fake(123, 'abc')
 		})
@@ -37,6 +41,9 @@ describe('unit/validation.js', function() {
 		})
 		it('should return true for `wasCalledWithExactly(123, "abc")`', function() {
 			expect(fake.wasCalledWithExactly(123, 'abc')).to.be.true
+		})
+		it('should return false for `wasCalledWith({})`', () => {
+			expect(fake.wasCalledWith({})).to.equal(false)
 		})
 
 		describe('and `fake.reset()` is called', function() {
@@ -67,6 +74,9 @@ describe('unit/validation.js', function() {
 			})
 			it('should match `wasCalledWith` deeply', function() {
 				expect(fake.wasCalledWith({ a: 1, b: [ 2, { c: 3 } ] })).to.be.true
+			})
+			it('should return false for `wasCalledWith({})`', () => {
+				expect(fake.wasCalledWith({ a: { b: {} } })).to.equal(false)
 			})
 		})
 

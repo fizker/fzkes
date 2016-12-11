@@ -222,6 +222,10 @@ function createFake(target, property) {
 }
 
 function compareObjects(a, b) {
+	if(typeof(a) !== typeof(b)) {
+		return false
+	}
+
 	switch(typeof(a)) {
 		case 'object':
 			if(a == null) {
