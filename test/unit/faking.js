@@ -4,6 +4,37 @@ describe('unit/faking.js', function() {
 		testData = {}
 	})
 
+	describe('Calling `restore()` on global scope', () => {
+		beforeEach(() => {
+			testData.fakes = [
+				fzkes.fake(),
+				fzkes.fake(),
+			]
+			testData.restoreCallCount = 0
+			testData.fakes.forEach(fake => {
+				fake.restore = ()=>{testData.restoreCallCount ++ }
+			})
+
+			fzkes.restore()
+		})
+		it('should restore all fakes', () => {
+			expect(testData.restoreCallCount).to.equal(testData.fakes.length)
+		})
+
+		describe('then calling `reset()` on global scope', () => {
+			beforeEach(() => {
+				testData.resetCallCount = 0
+				testData.fakes.forEach(fake => {
+					fake.reset = ()=>{testData.resetCallCount ++ }
+				})
+				fzkes.reset()
+			})
+			it('should reset all fakes', () => {
+				expect(testData.resetCallCount).to.equal(testData.fakes.length)
+			})
+		})
+	})
+
 	describe('When `fzkes.fakeAll(obj)` is called', function() {
 		var obj
 		var originalObj

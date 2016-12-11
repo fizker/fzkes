@@ -20,7 +20,6 @@ function restoreAll() {
 	fakes.reverse().forEach(function(fake) {
 		fake.restore()
 	})
-	fakes = []
 }
 
 function resetAll() {
