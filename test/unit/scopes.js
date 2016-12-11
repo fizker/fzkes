@@ -1,8 +1,38 @@
 describe('unit/scopes.js', function() {
+	var testData
 	var scope
 	beforeEach(function() {
+		testData = {}
 		scope = fzkes.scope()
 	})
+
+	describe('Calling `restore()` on a scope', () => {
+		beforeEach(() => {
+			testData.nonScopedFake = fzkes.fake()
+			testData.outsideScope = fzkes.scope()
+			testData.fakeInOutsideScope = testData.outsideScope.fake()
+			testData.firstLevelFake = scope.fake()
+			testData.secondLevelScope = scope.scope()
+			testData.secondLevelFake = testData.secondLevelScope.fake()
+
+			fzkes.fake(testData.firstLevelFake, 'restore')
+			fzkes.fake(testData.secondLevelFake, 'restore')
+
+			fzkes.fake(testData.nonScopedFake, 'restore')
+			fzkes.fake(testData.fakeInOutsideScope, 'restore')
+
+			scope.restore()
+		})
+		it('should call `restore()` on the fakes within', () => {
+			expect(testData.firstLevelFake.restore).to.have.been.called(1)
+			expect(testData.secondLevelFake.restore).to.have.been.called(1)
+		})
+		it('should not call `restore()` on fakes outside', () => {
+			expect(testData.nonScopedFake.restore).to.not.have.been.called
+			expect(testData.fakeInOutsideScope.restore).to.not.have.been.called
+		})
+	})
+
 	describe('When creating a new scope', function() {
 		it('should still have the fake and scope methods', function() {
 			expect(scope).to.have.property('fake').and.be.a('function')

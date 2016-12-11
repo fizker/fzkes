@@ -1,3 +1,5 @@
+var createFake = require('./fake')
+
 module.exports = createScope
 
 var __slice = Array.prototype.slice
@@ -5,11 +7,12 @@ var __slice = Array.prototype.slice
 function createScope() {
 	var subs = []
 
-	return { fake: sub(require('./fake'))
-	       , scope: sub(createScope)
-	       , restore: restoreSub
-	       , reset: resetSub
-	       }
+	return {
+		fake: sub(createFake),
+		scope: sub(createScope),
+		reset: resetSub,
+		restore: restoreSub,
+	}
 
 	function restoreSub() {
 		subs.forEach(function(sub) {
@@ -23,9 +26,9 @@ function createScope() {
 		})
 	}
 
-	function sub(fn) {
+	function sub(factory) {
 		return function() {
-			var sub = fn.apply(null, arguments)
+			var sub = factory.apply(null, arguments)
 			subs.push(sub)
 			return sub
 		}
