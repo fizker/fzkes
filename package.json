@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/fizker/js-fzkes.git"
+    "url": "git://github.com/fizker/fzkes.git"
   },
   "keywords": [
     "javascript",
