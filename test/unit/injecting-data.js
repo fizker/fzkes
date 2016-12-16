@@ -312,6 +312,15 @@ describe('unit/injecting-data.js', function() {
 				_4.should.not.have.been.called
 			})
 		})
+		describe('with a circular structure', () => {
+			it('should fail with a warning about circular structures in test data', () => {
+				expect(() => {
+					let o = {}
+					o.a = o
+					fake.withArgs(o)
+				}).to.throw(/circular structures.*not supported/i)
+			})
+		})
 	})
 	describe('When calling `withComplexArgs()`', function() {
 		var constrained
@@ -385,6 +394,15 @@ describe('unit/injecting-data.js', function() {
 			it('should return the same constrained fake', function() {
 				expect(fake.withComplexArgs({ regex: /abc/ }, { value: 123 }))
 					.to.equal(constrained)
+			})
+		})
+		describe('with a circular structure', () => {
+			it('should fail with a warning about circular structures in test data', () => {
+				expect(() => {
+					let o = {}
+					o.a = o
+					fake.withComplexArgs(o)
+				}).to.throw(/circular structures.*not supported/i)
 			})
 		})
 	})
