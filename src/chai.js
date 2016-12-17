@@ -1,3 +1,4 @@
+var decircularize = require('decircularize')
 var isFake = require('./is-fake')
 
 module.exports = attachToChai
@@ -59,7 +60,7 @@ function attachToChai(chai, utils) {
 	})
 
 	function formatCall(params) {
-		return JSON.stringify(params)
+		return JSON.stringify(params ? decircularize(params) : params)
 	}
 	function formatCalls(calls) {
 		calls = calls.map(formatCall)
