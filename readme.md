@@ -158,7 +158,7 @@ Examples follow:
 	// Default is no parameters to the callback, but these can be controlled
 	fake.callsArg({ arguments: [ 1, 2 ] })
 
-[mocha]: http://visionmedia.github.io/mocha/
+[mocha]: http://mochajs.org/
 
 ### Emulating calls after they have been called
 
