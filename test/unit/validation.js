@@ -1,7 +1,43 @@
 describe('unit/validation.js', function() {
+	var testData
 	var fake
 	beforeEach(function() {
 		fake = fzkes.fake()
+		testData = {
+			fake
+		}
+	})
+
+	describe('Asserting against a circular structure', () => {
+		beforeEach(() => {
+			var input = { a: {}, b: 1 }
+			input.a = input
+			fake(input)
+			testData.circularStructure = { b: 1 }
+			testData.circularStructure.a = testData.circularStructure
+		})
+		describe('with `wasCalledWith()`', () => {
+			it('should pass if asserting against other props', () => {
+				expect(fake.wasCalledWith({ b: 1 })).to.be.true
+			})
+			it('should fail with a warning about circular structures in test data', () => {
+				expect(() => {
+					fake.wasCalledWith(testData.circularStructure)
+				}).to.throw(/circular structures.*not supported/i)
+			})
+		})
+		describe('with `wasCalledWithExactly()`', () => {
+			it('should not throw if asserting against other props', () => {
+				expect(() => {
+					fake.wasCalledWith({ b: 1 })
+				}).to.not.throw()
+			})
+			it('should fail with a warning about circular structures in test data', () => {
+				expect(() => {
+					fake.wasCalledWithExactly(testData.circularStructure)
+				}).to.throw(/circular structures.*not supported/i)
+			})
+		})
 	})
 
 	describe('When a fake have not been called', function() {

@@ -1,4 +1,6 @@
+var decircularize = require('decircularize')
 var isFake = require('./is-fake')
+
 function isResettable(fake) {
 	if(!isFake(fake)) return false
 
@@ -140,12 +142,14 @@ function createFake(target, property) {
 	}
 	fake.wasCalledWith = function() {
 		var args = __slice.call(arguments)
+		args.forEach(function(x) { assertNotCircular(x) })
 		return calls.some(function(call) {
 			return compareArrays(args, call)
 		})
 	}
 	fake.wasCalledWithExactly = function() {
 		var args = __slice.call(arguments)
+		args.forEach(function(x) { assertNotCircular(x) })
 		return calls.some(function(call) {
 			return call.length == args.length && compareArrays(args, call)
 		})
@@ -155,6 +159,7 @@ function createFake(target, property) {
 	}
 	fake.withComplexArgs = function() {
 		var args = __slice.call(arguments)
+		args.forEach(function(x) { assertNotCircular(x) })
 		var newFake = constrainedFakes.find(function(f) {
 			if(f.args.length != args.length) {
 				return false
@@ -260,4 +265,10 @@ function compareArrays(a, b) {
 
 function constrainedFakesSorter(a, b) {
 	return b.args.length - a.args.length
+}
+
+function assertNotCircular(value) {
+	decircularize(value, { onCircular: function() {
+		throw new Error('The use of circular structures in the tests are not supported')
+	} })
 }

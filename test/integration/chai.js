@@ -135,6 +135,38 @@ describe('integration/chai.js', function() {
 				}).not.to.throw()
 			})
 		})
+		describe('when the fake was called with a circular structure', () => {
+			beforeEach(() => {
+				testData.circularStructure = { a: 1 }
+				testData.circularStructure.circularRef = testData.circularStructure
+
+				fake(testData.circularStructure)
+			})
+
+			it('should pass if asserting against other props', () => {
+				expect(() => {
+					expect(fake).to.have.been.calledWith({ a: 1 })
+				}).to.not.throw()
+			})
+			it('should pass if asserting against the circular ref', () => {
+				expect(fake).to.have.been.calledWith({ circularRef: { a: 1 } })
+			})
+		})
+		describe('when `calledWith()` is called with a circular structure', () => {
+			beforeEach(() => {
+				testData.circularStructure = { a: 1 }
+				testData.circularStructure.circularRef = testData.circularStructure
+
+				let input = { a: 1 }
+				input.circularRef = input
+				fake(input)
+			})
+			it('should fail with a warning about circular structures in test data', () => {
+				expect(() => {
+					expect(fake).to.have.been.calledWith(testData.circularStructure)
+				}).to.throw(/circular structures.*not supported/i)
+			})
+		})
 	})
 	describe('When asserting the call count', function() {
 		it('should pass if the count matches', function() {
